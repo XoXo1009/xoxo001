@@ -68,7 +68,7 @@ body{
 .page.active{display:block;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-/* ===== 新头部：左标题 + 右侧双头像切换 ===== */
+/* ===== 头部 ===== */
 .page-hero{padding:8px 20px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
 .hero-left{flex:1;min-width:0;}
 .hero-title{font-size:32px;font-weight:800;letter-spacing:-1.3px;color:var(--text-primary);line-height:1.05;}
@@ -81,34 +81,47 @@ body{
 .hero-pair .mini-av svg{width:18px;height:18px;stroke-width:1.6;fill:none;stroke:var(--text-tertiary);}
 .hero-pair .mini-av.me{border-color:var(--accent);}
 
-/* ===== 动态流 ===== */
-.feed{padding:0 16px 120px;display:flex;flex-direction:column;gap:18px;}
-.feed-hero{position:relative;margin:0 16px 18px;border-radius:26px;overflow:hidden;background:var(--bg-soft);aspect-ratio:16/8;box-shadow:var(--shadow-md);}
-.feed-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(var(--hero-blur,0px));transform:scale(1.08);}
-.feed-hero-bg.ph{display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);filter:none;transform:none;}
-.feed-hero-bg.ph svg{width:44px;height:44px;stroke-width:1.3;fill:none;stroke:currentColor;}
-.feed-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.42));}
-.feed-hero-av{position:absolute;right:20px;bottom:16px;width:72px;height:72px;border-radius:50%;background:var(--bg-soft);border:4px solid rgba(255,255,255,.95);overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer;}
-.feed-hero-av img{width:100%;height:100%;object-fit:cover;}
-.feed-hero-av svg{width:30px;height:30px;stroke-width:1.4;fill:none;stroke:var(--text-tertiary);}
-.feed-hero-name{position:absolute;left:20px;bottom:22px;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;text-shadow:0 2px 8px rgba(0,0,0,.4);max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ===== 动态流布局切换 ===== */
+.feed-toolbar{display:flex;align-items:center;justify-content:flex-end;padding:0 20px 12px;gap:8px;}
+.layout-btn{display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--text-secondary);cursor:pointer;font-family:inherit;transition:all .15s;}
+.layout-btn:active{transform:scale(.95);}
+.layout-btn svg{width:16px;height:16px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
+.layout-btn .lbl{font-size:12px;}
 
-.post{background:var(--bg-card);border-radius:24px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:var(--shadow-md);border:1px solid var(--border);}
+/* 单列 / 双列 */
+.feed{padding:0 16px 120px;display:grid;gap:14px;}
+.feed.mode-1{grid-template-columns:1fr;}
+.feed.mode-2{grid-template-columns:1fr 1fr;gap:12px;}
+.feed.mode-2 .post-body{padding:12px 12px 10px;}
+.feed.mode-2 .post-head{gap:8px;margin-bottom:8px;}
+.feed.mode-2 .post-av{width:30px;height:30px;}
+.feed.mode-2 .post-av svg{width:16px;height:16px;}
+.feed.mode-2 .post-name{font-size:13px;}
+.feed.mode-2 .post-time{font-size:10px;}
+.feed.mode-2 .post-text{font-size:13px;-webkit-line-clamp:4;line-height:1.5;}
+.feed.mode-2 .post-media{aspect-ratio:1/1;}
+.feed.mode-2 .post-foot{padding:9px 12px 12px;gap:6px;}
+.feed.mode-2 .post-stat{font-size:10px;padding:4px 8px;gap:4px;}
+.feed.mode-2 .post-stat svg{width:12px;height:12px;}
+.feed.mode-2 .post-read{font-size:10px;}
+.feed.mode-2 .post{border-radius:18px;}
+
+.post{background:var(--bg-card);border-radius:22px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:var(--shadow-md);border:1px solid var(--border);display:flex;flex-direction:column;}
 .post:active{transform:scale(.982);box-shadow:var(--shadow-sm);}
 .post-media{width:100%;aspect-ratio:4/3;background:var(--bg-soft);overflow:hidden;position:relative;}
 .post-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
 .post:active .post-media img{transform:scale(1.03);}
-.post-body{padding:16px 18px 14px;}
-.post-head{display:flex;align-items:center;gap:11px;margin-bottom:12px;}
-.post-av{width:40px;height:40px;border-radius:50%;background:var(--bg-soft);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;}
+.post-body{padding:14px 16px 12px;flex:1;}
+.post-head{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+.post-av{width:38px;height:38px;border-radius:50%;background:var(--bg-soft);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.06);cursor:pointer;}
 .post-av img{width:100%;height:100%;object-fit:cover;}
-.post-av svg{width:20px;height:20px;stroke-width:1.6;fill:none;stroke:var(--text-tertiary);}
+.post-av svg{width:19px;height:19px;stroke-width:1.6;fill:none;stroke:var(--text-tertiary);}
 .post-meta{flex:1;min-width:0;}
-.post-name{font-size:15px;font-weight:700;color:var(--text-primary);letter-spacing:-.2px;cursor:pointer;}
-.post-time{font-size:12px;color:var(--text-secondary);margin-top:1px;}
+.post-name{font-size:14px;font-weight:700;color:var(--text-primary);letter-spacing:-.2px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.post-time{font-size:11px;color:var(--text-secondary);margin-top:1px;}
 .post-time.scheduled{color:var(--warn);}
-.post-text{font-size:16px;line-height:1.55;color:var(--text-primary);word-break:break-word;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.2px;}
-.post-foot{display:flex;align-items:center;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--border);}
+.post-text{font-size:15px;line-height:1.55;color:var(--text-primary);word-break:break-word;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.2px;}
+.post-foot{display:flex;align-items:center;gap:8px;padding:11px 16px 14px;border-top:1px solid var(--border);}
 .post-stat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);font-weight:600;background:var(--bg-soft);padding:5px 11px;border-radius:20px;}
 .post-stat svg{width:15px;height:15px;stroke-width:1.9;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
 .post-stat.has-cmt{color:var(--accent);background:var(--accent-soft);}
@@ -141,7 +154,7 @@ body{
 .detail-time{font-size:12px;color:var(--text-secondary);margin-top:2px;}
 .detail-text{font-size:17px;line-height:1.6;color:var(--text-primary);word-break:break-word;white-space:pre-wrap;letter-spacing:-.2px;}
 
-/* ===== 评论区：微信式引用条 + 对齐不乱 ===== */
+/* ===== 评论区 ===== */
 .cmt-wrap{padding:0 16px 110px;}
 .cmt-header{display:flex;align-items:center;justify-content:space-between;padding:16px 6px 14px;font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;}
 .cmt-list{display:flex;flex-direction:column;gap:16px;}
@@ -167,7 +180,6 @@ body{
 .cmt-actions button{background:none;border:none;padding:0;color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 .cmt-actions button:active{color:var(--accent);}
 .cmt-actions .del:active{color:var(--danger);}
-.cmt-show-more{margin-top:8px;font-size:12px;color:var(--accent);font-weight:700;cursor:pointer;background:none;border:none;font-family:inherit;text-align:left;padding:4px 2px;}
 
 .detail-bar{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg-blur);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-top:1px solid var(--border);flex-shrink:0;}
 .reply-preview{display:flex;align-items:center;gap:8px;background:var(--quote-bg);border-radius:10px;padding:7px 10px;margin-bottom:8px;font-size:12px;}
@@ -183,7 +195,7 @@ body{
 .detail-send:active{transform:scale(.95);}
 .detail-send:disabled{opacity:.3;pointer-events:none;}
 
-/* ===== Tab Bar：新图标 + 动态小红点 ===== */
+/* ===== Tab Bar ===== */
 .tabbar{position:absolute;bottom:0;left:0;right:0;background:var(--bg-blur);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-top:1px solid var(--border);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:30;}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0;background:none;border:none;cursor:pointer;color:var(--text-secondary);font-family:inherit;transition:color .2s;position:relative;}
 .tab.active{color:var(--accent);}
@@ -197,7 +209,7 @@ body{
 .fab svg{width:26px;height:26px;stroke-width:2.4;fill:none;stroke:currentColor;stroke-linecap:round;}
 .fab.hidden{display:none;}
 
-/* ===== 全局消息弹窗（顶部滑下） ===== */
+/* ===== 消息弹窗 ===== */
 .msg-pop{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:12px;right:12px;background:var(--bg-blur);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);border-radius:20px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 36px rgba(0,0,0,.18);border:1px solid var(--border);z-index:120;transform:translateY(-160%);transition:transform .42s cubic-bezier(.16,1,.3,1),opacity .3s;cursor:pointer;opacity:0;}
 .msg-pop.show{transform:translateY(0);opacity:1;}
 .msg-pop-av{width:40px;height:40px;border-radius:50%;background:var(--bg-soft);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
@@ -224,7 +236,7 @@ body{
 .si.danger .si-label{color:var(--danger);}
 .si.danger .si-icon{background:var(--danger);}
 
-/* ===== 我的 / Ta 的主页 ===== */
+/* ===== 个人主页（iCity 风） ===== */
 .profile{padding-bottom:120px;}
 .profile-cover{width:100%;aspect-ratio:16/9;background:var(--bg-soft);overflow:hidden;position:relative;cursor:pointer;border-radius:0 0 28px 28px;}
 .profile-cover img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -245,7 +257,7 @@ body{
 .stat-lbl{font-size:10px;color:var(--text-secondary);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
 .profile-section{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;padding:22px 24px 10px;}
 
-/* ===== 日历：CSS Grid 绝对对齐 ===== */
+/* ===== 日历（重做：手机友好月视图） ===== */
 .cal-wrap{padding:0 16px 120px;}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 6px 16px;}
 .cal-month{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text-primary);}
@@ -254,11 +266,11 @@ body{
 .cal-btn:active{background:var(--accent-soft);}
 .cal-btn svg{width:20px;height:20px;stroke-width:2.2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
 
-.cal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:16px;box-shadow:var(--shadow-sm);}
-.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;}
+.cal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:14px 12px;box-shadow:var(--shadow-sm);}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;}
 .cal-week span{text-align:center;font-size:11px;font-weight:700;color:var(--text-secondary);letter-spacing:.5px;padding:4px 0;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.cal-cell{position:relative;width:100%;aspect-ratio:1/1;border-radius:12px;cursor:pointer;background:transparent;transition:background .14s,transform .14s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-cell{position:relative;width:100%;aspect-ratio:1/1;border-radius:10px;cursor:pointer;background:transparent;transition:background .14s,transform .14s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
 .cal-cell.empty{cursor:default;pointer-events:none;}
 .cal-cell:not(.empty):active{transform:scale(.9);}
 .cal-cell.today{background:var(--bg-soft);}
@@ -270,7 +282,7 @@ body{
 .cal-dot.done{background:var(--success);}
 .cal-cell.selected .cal-dot{background:rgba(255,255,255,.95);}
 
-.cal-detail{margin-top:16px;background:var(--bg-card);border-radius:20px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
+.cal-detail{margin-top:14px;background:var(--bg-card);border-radius:20px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm);}
 .cal-detail-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .cal-detail-date{font-size:15px;font-weight:800;color:var(--text-primary);letter-spacing:-.3px;}
 .cal-detail-week{font-size:11px;color:var(--text-secondary);margin-top:2px;font-weight:600;}
@@ -475,7 +487,6 @@ body{
   <div class="entry hidden" id="entry"><div class="entry-inner" id="entryInner"></div></div>
   <div class="status-bar"><span class="status-time" id="clock">--:--</span><span></span></div>
 
-  <!-- 全局消息弹窗 -->
   <div class="msg-pop" id="msgPop"><div class="msg-pop-av" id="msgPopAv"></div><div class="msg-pop-body"><div class="msg-pop-title" id="msgPopTitle"></div><div class="msg-pop-text" id="msgPopText"></div></div></div>
 
   <div class="screen" id="screen" style="display:none;">
@@ -487,7 +498,13 @@ body{
         </div>
         <div class="hero-pair" id="heroPair"></div>
       </div>
-      <div class="feed" id="feedList"></div>
+      <div class="feed-toolbar">
+        <button class="layout-btn" id="layoutToggle">
+          <svg id="layoutIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg>
+          <span class="lbl" id="layoutLbl">单列</span>
+        </button>
+      </div>
+      <div class="feed mode-1" id="feedList"></div>
     </div>
 
     <div class="page" id="page-other">
@@ -507,7 +524,6 @@ body{
       <div class="settings" id="settingsBox"></div>
     </div>
 
-    <!-- Ta 的主页（只读） -->
     <div class="page" id="page-partner"><div class="profile" id="partnerProfile"></div></div>
   </div>
 
@@ -532,7 +548,6 @@ body{
 
   <button class="fab hidden" id="fab"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 
-  <!-- 动态详情 -->
   <div class="detail" id="detail">
     <div class="detail-nav"><button class="detail-nav-btn" id="detailBack"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div class="detail-nav-title">动态</div></div>
     <div class="detail-scroll" id="detailScroll">
@@ -582,12 +597,8 @@ body{
   </div>
 </div>
 <script>
-// ============================================================
-// 🔑 Supabase 配置
-// ============================================================
 const SUPABASE_URL = 'https://fwwlztmyqghhrusypjdz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_v7yiZpyk60DgxJS9Ucxf8Q_n2kEDYwD';
-// ============================================================
 
 (function(){
 'use strict';
@@ -597,6 +608,7 @@ const CUSTOM_THEME_KEY='room_custom_theme_v7';
 const ROOMS_KEY='room_my_rooms_v7';
 const LAST_ROOM_KEY='room_last_room_v7';
 const IDENTITY_KEY='room_identity_v7';
+const LAYOUT_KEY='room_feed_layout_v7';
 
 const THEMES=[
   {id:'white',name:'纯白',bg:'#ffffff',card:'#ffffff',accent:'#007aff'},
@@ -608,6 +620,7 @@ const THEMES=[
 let customTheme=JSON.parse(localStorage.getItem(CUSTOM_THEME_KEY)||'null')||{bg:'#ffffff',card:'#ffffff',accent:'#007aff',text:'#000000'};
 let myRooms=JSON.parse(localStorage.getItem(ROOMS_KEY)||'{}');
 let myIdentities=JSON.parse(localStorage.getItem(IDENTITY_KEY)||'{}');
+let feedLayout=localStorage.getItem(LAYOUT_KEY)==='2'?'2':'1';
 
 let roomCode=null;
 let state=null;
@@ -629,15 +642,11 @@ let editorImage=null;
 let editorScheduleAt=null;
 
 let detailPostId=null;
-let replyingTo=null; // {postId, commentId}
-const expandedComments={};
-
-// 未读标记（本地），用于小红点和消息弹窗去重
+let replyingTo=null;
 let unreadInteractions=0;
 
 const $=id=>document.getElementById(id);
 
-/* ---------- 颜色工具 ---------- */
 function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');return{r:parseInt(hex.slice(0,2),16),g:parseInt(hex.slice(2,4),16),b:parseInt(hex.slice(4,6),16)};}
 function rgba(hex,a){const{r,g,b}=hexToRgb(hex);return `rgba(${r},${g},${b},${a})`;}
 function isDark(hex){const{r,g,b}=hexToRgb(hex);return(r*.299+g*.587+b*.114)<128;}
@@ -714,7 +723,6 @@ function saveCustom(){
   if(localStorage.getItem(THEME_KEY)==='custom')applyCustomTheme();
 }
 
-/* ---------- 通用工具 ---------- */
 function pad(n){return n.toString().padStart(2,'0');}
 function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function fmtHm(ts){const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());}
@@ -748,7 +756,6 @@ function userByKey(k){return state&&state.users?state.users[k]:null;}
 function genId(p){return (p||'id')+Date.now()+Math.random().toString(36).slice(2,7);}
 function avSvg(){return '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.2a7.5 7.5 0 0 1 15 0"/></svg>';}
 
-/* ---------- Supabase ---------- */
 async function cloudGet(code){
   const res=await fetch(SUPABASE_URL+'/rest/v1/rooms?code=eq.'+encodeURIComponent(code)+'&select=data',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
   if(!res.ok)throw new Error('HTTP '+res.status);
@@ -765,7 +772,6 @@ async function cloudUpdate(code,data){
   if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+' '+t);}
 }
 
-/* ---------- 房间数据 ---------- */
 function emptyRoom(){
   return {users:{user1:null,user2:null},posts:[],anniversary:null,customAnnivs:[],todos:{},notes:{},annivRadius:24,annivBlur:0,roomName:'',notifications:[],createdAt:Date.now(),_v:7};
 }
@@ -798,7 +804,6 @@ function migComments(arr){
     if(c.replies.length)migComments(c.replies);
   });
 }
-
 function saveRoom(){
   if(!roomCode||!state)return;
   localStorage.setItem('cache_'+roomCode,JSON.stringify(state));
@@ -840,8 +845,6 @@ function rerenderCurrent(){
   if(detailPostId&&$('detail').classList.contains('open'))renderDetail(detailPostId);
   updateFeedDot();
 }
-
-/* ---------- 检测新评论 ---------- */
 function detectNewComments(oldS,newS){
   if(!oldS||!currentUser)return;
   const pk=partnerKey();
@@ -854,7 +857,6 @@ function detectNewComments(oldS,newS){
     if(newCnt>oldCnt){
       const latest=findLatestCommentBy(p.comments,pk);
       if(latest){
-        // 已存在相同通知就不重复弹
         if(!newS.notifications)newS.notifications=[];
         const dup=newS.notifications.some(n=>n.type==='comment'&&n.from===pk&&n.postId===p.id&&n.text===latest.text);
         if(!dup){
@@ -866,13 +868,8 @@ function detectNewComments(oldS,newS){
       }
     }
   });
-  if(hasNew){
-    unreadInteractions++;
-    updateFeedDot();
-  }
+  if(hasNew){unreadInteractions++;updateFeedDot();}
 }
-
-/* ---------- 消息弹窗 ---------- */
 function showMsgPop(text,fromKey,postId){
   const u=userByKey(fromKey);
   $('msgPopAv').innerHTML=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
@@ -880,11 +877,7 @@ function showMsgPop(text,fromKey,postId){
   $('msgPopText').textContent=text;
   const el=$('msgPop');
   el.classList.add('show');
-  el.onclick=()=>{
-    el.classList.remove('show');
-    markAllRead();
-    if(postId)openDetail(postId);
-  };
+  el.onclick=()=>{el.classList.remove('show');markAllRead();if(postId)openDetail(postId);};
   clearTimeout(msgPopTimer);
   msgPopTimer=setTimeout(()=>el.classList.remove('show'),4200);
 }
@@ -901,8 +894,6 @@ function updateFeedDot(){
   const dot=$('feedDot');
   if(dot)dot.style.display=has?'block':'none';
 }
-
-/* ---------- 计数 ---------- */
 function countAllComments(arr){let n=0;arr.forEach(c=>{n++;if(c.replies)n+=countAllComments(c.replies);});return n;}
 function findLatestCommentBy(arr,author){
   let l=null;
@@ -914,15 +905,7 @@ function findLatestCommentBy(arr,author){
 }
 function findComment(arr,id){for(const c of arr){if(c.id===id)return c;const r=findComment(c.replies||[],id);if(r)return r;}return null;}
 function rmComment(arr,id){for(let i=0;i<arr.length;i++){if(arr[i].id===id){arr.splice(i,1);return true;}if(arr[i].replies&&rmComment(arr[i].replies,id))return true;}return false;}
-function findParentComment(arr,childId){
-  for(const c of arr){
-    if(c.replies&&c.replies.some(r=>r.id===childId))return c;
-    if(c.replies){const p=findParentComment(c.replies,childId);if(p)return p;}
-  }
-  return null;
-}
 
-/* ---------- 进场页 ---------- */
 function showEntry(){
   $('screen').style.display='none';
   $('tabbar').style.display='none';
@@ -1095,7 +1078,6 @@ function enterMain(){
 function showLoad(t){$('loadingText').textContent=t||'加载中…';$('loading').classList.remove('hidden');}
 function hideLoad(){$('loading').classList.add('hidden');}
 
-/* ---------- Tab 切换 ---------- */
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
@@ -1111,7 +1093,6 @@ function switchTab(tab){
   $('fab').classList.toggle('hidden',tab!=='feed');
 }
 
-/* ---------- 头部双头像 ---------- */
 function renderHeroPair(container){
   if(!container)return;
   const me=meUser(),pk=partnerUser();
@@ -1133,17 +1114,33 @@ function renderHeroPair(container){
 }
 
 /* ---------- 动态流 ---------- */
+function applyLayout(){
+  const list=$('feedList');
+  list.classList.remove('mode-1','mode-2');
+  list.classList.add('mode-'+feedLayout);
+  const icon=$('layoutIcon');
+  const lbl=$('layoutLbl');
+  if(feedLayout==='1'){
+    icon.innerHTML='<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/>';
+    lbl.textContent='单列';
+  }else{
+    icon.innerHTML='<rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/>';
+    lbl.textContent='双列';
+  }
+  localStorage.setItem(LAYOUT_KEY,feedLayout);
+}
 function renderFeed(){
   if(!state)return;
   const u=meUser(),pk=partnerUser();
   const sub=$('feedSub');
   if(sub)sub.textContent = u && pk ? (u.name||'你')+' 和 '+(pk.name||'Ta')+' 的专属空间' : '你和 Ta 的专属空间';
   renderHeroPair($('heroPair'));
+  applyLayout();
 
   const ps=state.posts.filter(isPub).sort((a,b)=>(b.publishAt||b.createdAt||0)-(a.publishAt||a.createdAt||0));
   const c=$('feedList');
   if(!ps.length){
-    c.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="empty-title">还没有新动态</div><div class="empty-sub">点右下角 + 发第一条吧</div></div>';
+    c.innerHTML='<div class="empty" style="grid-column:1/-1;"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="empty-title">还没有新动态</div><div class="empty-sub">点右下角 + 发第一条吧</div></div>';
     return;
   }
   c.innerHTML=ps.map(p=>renderCard(p)).join('');
@@ -1186,7 +1183,8 @@ function renderCard(p){
     '<div class="post-foot"><div class="post-stat '+(cnt>0?'has-cmt':'')+'"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'+(cnt>0?cnt:'评论')+'</div>'+readTag+'</div>'+
   '</div>';
 }
-/* ---------- 我的主页 ---------- */
+
+/* ---------- 个人主页（iCity 风） ---------- */
 function renderMe(){
   if(!state)return;
   const u=meUser();
@@ -1213,7 +1211,7 @@ function renderMe(){
       '<div class="stat-card"><div class="stat-num">'+totalRead+'</div><div class="stat-lbl">被读</div></div>'+
     '</div>'+
     '<div class="profile-section">我的动态</div>'+
-    '<div class="feed" id="meList" style="padding-bottom:120px;"></div>';
+    '<div class="feed mode-1" id="meList" style="padding-bottom:120px;"></div>';
   $('meCover').addEventListener('click',()=>pickImage('cover'));
   $('meAv').addEventListener('click',()=>pickImage('avatar'));
   $('meName').addEventListener('click',editName);
@@ -1222,7 +1220,7 @@ function renderMe(){
   const sorted=mine.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   const c=$('meList');
   if(!sorted.length){
-    c.innerHTML='<div class="empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">还没有发过动态</div></div>';
+    c.innerHTML='<div class="empty" style="grid-column:1/-1;padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">还没有发过动态</div></div>';
     return;
   }
   c.innerHTML=sorted.map(p=>renderCard(p)).join('');
@@ -1258,12 +1256,12 @@ function renderPartner(){
       '<div class="stat-card"><div class="stat-num">'+totalRead+'</div><div class="stat-lbl">被读</div></div>'+
     '</div>'+
     '<div class="profile-section">Ta 的动态</div>'+
-    '<div class="feed" id="pList" style="padding-bottom:120px;"></div>';
+    '<div class="feed mode-1" id="pList" style="padding-bottom:120px;"></div>';
 
   const sorted=theirs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   const c=$('pList');
   if(!sorted.length){
-    c.innerHTML='<div class="empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">Ta 还没有发过动态</div></div>';
+    c.innerHTML='<div class="empty" style="grid-column:1/-1;padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">Ta 还没有发过动态</div></div>';
     return;
   }
   c.innerHTML=sorted.map(p=>renderCard(p)).join('');
@@ -1313,14 +1311,12 @@ function renderDetail(postId){
   bindDetailEvents();
 }
 
-/* 渲染一条评论（微信式引用条，对齐不乱） */
 function renderComment(c,postId){
   const u=state.users[c.author];
   const name=u?u.name:'Ta';
   const av=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
   const isMe=c.author===currentUser;
   const canDel=isMe;
-  // 找被引用的父评论
   let quoteHtml='';
   if(c.replyTo){
     const parent=findComment((state.posts.find(x=>x.id===postId).comments||[]),c.replyTo);
@@ -1387,7 +1383,6 @@ function renderReplyPreview(){
   $('rpClose').addEventListener('click',()=>{replyingTo=null;renderReplyPreview();});
 }
 
-/* 输入框事件 */
 $('detailInput').addEventListener('input',e=>{$('detailSend').disabled=!e.target.value.trim();});
 $('detailInput').addEventListener('keypress',e=>{if(e.key==='Enter')$('detailSend').click();});
 $('detailSend').addEventListener('click',()=>{
@@ -1416,7 +1411,7 @@ function renderOther(){
 $('segCal').addEventListener('click',()=>{currentSubTab='calendar';$('segCal').classList.add('active');$('segAnniv').classList.remove('active');renderOther();});
 $('segAnniv').addEventListener('click',()=>{currentSubTab='anniv';$('segAnniv').classList.add('active');$('segCal').classList.remove('active');renderOther();});
 
-/* ---------- 日历：CSS Grid 绝对对齐 ---------- */
+/* ---------- 日历（重做） ---------- */
 function renderCalendar(){
   const c=$('viewCal');
   const first=new Date(calYear,calMonth,1);
@@ -1655,7 +1650,7 @@ function editCustomAnniv(id){
   $('modal').classList.add('open');
 }
 
-/* ---------- 设置（去掉评论通知入口） ---------- */
+/* ---------- 设置 ---------- */
 function renderSettings(){
   if(!state)return;
   const c=$('settingsBox');
@@ -1875,6 +1870,10 @@ $('cropConfirm').addEventListener('click',()=>{
 /* ---------- 事件绑定 ---------- */
 document.getElementById('tabbar').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;switchTab(b.dataset.tab);});
 $('fab').addEventListener('click',()=>openEditor(null));
+$('layoutToggle').addEventListener('click',()=>{
+  feedLayout=feedLayout==='1'?'2':'1';
+  applyLayout();
+});
 $('themeOverlay').addEventListener('click',()=>$('themePicker').classList.remove('open'));
 $('sheet').addEventListener('click',e=>{if(e.target===$('sheet'))$('sheet').classList.remove('open');});
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('open');});
