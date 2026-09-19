@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>私密房间</title>
+<title>喵喵机</title>
 <style>
 :root,[data-theme="white"]{
   --bg-base:#ffffff;--bg-grouped:#f5f5f7;--bg-card:#ffffff;--bg-soft:#f2f2f7;--bg-input:#f2f2f7;
@@ -85,11 +85,11 @@ body{
 .layout-btn:active{transform:scale(.95);}
 .layout-btn svg{width:16px;height:16px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
 
-/* ===== 动态流：单列 / 小红书瀑布流 ===== */
+/* ===== 动态流：单列 / 双列并排 ===== */
 .feed{padding:0 16px 120px;}
 .feed.mode-1{display:flex;flex-direction:column;gap:16px;}
-.feed.mode-2{column-count:2;column-gap:12px;}
-.feed.mode-2 .post{display:inline-block;width:100%;margin-bottom:12px;break-inside:avoid;}
+.feed.mode-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}
+.feed.mode-2 .post{width:100%;}
 
 .post{background:var(--bg-card);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:var(--shadow-md);border:1px solid var(--border);}
 .post:active{transform:scale(.982);box-shadow:var(--shadow-sm);}
@@ -114,7 +114,7 @@ body{
 .post-read.read{color:var(--success);}
 .post-read.pending{color:var(--warn);}
 
-/* 瀑布流模式下的紧凑样式 */
+/* 双列下的紧凑样式 */
 .feed.mode-2 .post-body{padding:10px 12px 8px;}
 .feed.mode-2 .post-head{gap:8px;margin-bottom:7px;}
 .feed.mode-2 .post-av{width:28px;height:28px;}
@@ -230,28 +230,40 @@ body{
 .si.danger .si-label{color:var(--danger);}
 .si.danger .si-icon{background:var(--danger);}
 
-/* ===== iCity 风个人主页 ===== */
-.profile{padding-bottom:120px;}
-.profile-cover{width:100%;aspect-ratio:16/9;background:var(--bg-soft);overflow:hidden;position:relative;cursor:pointer;border-radius:0 0 28px 28px;}
-.profile-cover img{width:100%;height:100%;object-fit:cover;display:block;}
-.profile-cover-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);}
-.profile-cover-ph svg{width:48px;height:48px;stroke-width:1.3;fill:none;stroke:currentColor;}
-.profile-cover .edit-tag{position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);border-radius:16px;padding:6px 14px;color:#fff;font-size:11px;font-weight:600;}
-.profile-header{padding:0 24px;display:flex;align-items:flex-start;gap:18px;margin-top:-44px;position:relative;z-index:2;}
-.profile-av{width:88px;height:88px;border-radius:50%;background:var(--bg-soft);border:4px solid var(--bg-base);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 28px rgba(0,0,0,.14);}
-.profile-av img{width:100%;height:100%;object-fit:cover;}
-.profile-av svg{width:38px;height:38px;stroke-width:1.3;fill:none;stroke:var(--text-tertiary);}
-.profile-text{padding-top:52px;flex:1;min-width:0;}
-.profile-name{font-size:22px;font-weight:800;letter-spacing:-.6px;color:var(--text-primary);cursor:pointer;word-break:break-word;line-height:1.15;}
-.profile-bio{font-size:13px;color:var(--text-secondary);margin-top:5px;cursor:pointer;line-height:1.4;word-break:break-word;}
-.profile-bio.empty{color:var(--text-tertiary);font-style:italic;}
-.profile-stats{display:flex;gap:10px;padding:18px 20px 6px;}
-.stat-card{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:14px 12px;text-align:center;box-shadow:var(--shadow-sm);}
-.stat-num{font-size:20px;font-weight:800;color:var(--accent);letter-spacing:-.5px;}
-.stat-lbl{font-size:10px;color:var(--text-secondary);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
-.profile-section{font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;padding:22px 24px 10px;}
+/* ===== iCity 风个人主页（重做） ===== */
+.profile{padding-bottom:120px;background:var(--bg-grouped);}
+.profile-hero{position:relative;height:260px;overflow:hidden;background:var(--bg-soft);}
+.profile-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.profile-hero-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);background:linear-gradient(135deg,var(--accent-soft),var(--bg-soft));}
+.profile-hero-ph svg{width:56px;height:56px;stroke-width:1.3;fill:none;stroke:currentColor;}
+.profile-hero-mask{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 100%);pointer-events:none;}
+.profile-hero-edit{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:16px;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);border:none;border-radius:14px;padding:7px 13px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+.profile-hero-bottom{position:absolute;left:20px;right:20px;bottom:16px;display:flex;align-items:flex-end;gap:14px;z-index:2;}
+.profile-hero-av{width:76px;height:76px;border-radius:50%;background:var(--bg-soft);border:3px solid #fff;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+.profile-hero-av img{width:100%;height:100%;object-fit:cover;}
+.profile-hero-av svg{width:32px;height:32px;stroke-width:1.4;fill:none;stroke:var(--text-tertiary);}
+.profile-hero-name{color:#fff;font-size:20px;font-weight:800;letter-spacing:-.4px;text-shadow:0 2px 8px rgba(0,0,0,.4);word-break:break-word;line-height:1.15;padding-bottom:6px;cursor:pointer;}
 
-/* ===== 日历（重做：手机友好月视图） ===== */
+.profile-body{padding:16px 16px 0;}
+.profile-bio-card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow-sm);cursor:pointer;margin-bottom:14px;}
+.profile-bio-label{font-size:10px;font-weight:700;color:var(--text-secondary);letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px;}
+.profile-bio{font-size:14px;color:var(--text-primary);line-height:1.5;word-break:break-word;}
+.profile-bio.empty{color:var(--text-tertiary);font-style:italic;}
+
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:14px 8px;text-align:center;box-shadow:var(--shadow-sm);}
+.stat-num{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-.6px;line-height:1;}
+.stat-lbl{font-size:10px;color:var(--text-secondary);font-weight:700;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;}
+
+.profile-tabs{display:flex;background:var(--bg-soft);border-radius:14px;padding:3px;margin-bottom:14px;}
+.profile-tab{flex:1;padding:9px;border-radius:11px;background:none;border:none;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;font-family:inherit;transition:all .18s;}
+.profile-tab.active{background:var(--bg-card);color:var(--text-primary);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:120px;}
+.profile-grid.mode-1{grid-template-columns:1fr;}
+.profile-grid .post{border-radius:16px;}
+
+/* ===== 日历（彻底重写：固定 6 行 × 7 列） ===== */
 .cal-wrap{padding:0 16px 120px;}
 .cal-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 6px 16px;}
 .cal-month{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text-primary);}
@@ -260,16 +272,17 @@ body{
 .cal-btn:active{background:var(--accent-soft);}
 .cal-btn svg{width:20px;height:20px;stroke-width:2.2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
 
-.cal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:12px 8px;box-shadow:var(--shadow-sm);}
-.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:0;margin-bottom:4px;}
+.cal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:14px 10px;box-shadow:var(--shadow-sm);}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px;}
 .cal-week span{text-align:center;font-size:11px;font-weight:700;color:var(--text-secondary);letter-spacing:.5px;padding:4px 0;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-cell{position:relative;width:100%;height:44px;border-radius:10px;cursor:pointer;background:transparent;transition:background .14s,transform .14s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
-.cal-cell.empty{cursor:default;pointer-events:none;}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:48px;gap:2px;}
+.cal-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:12px;cursor:pointer;background:transparent;transition:background .14s,transform .14s;height:48px;}
+.cal-cell.empty{cursor:default;pointer-events:none;visibility:hidden;}
 .cal-cell:not(.empty):active{transform:scale(.9);}
 .cal-cell.today{background:var(--bg-soft);}
 .cal-cell.selected{background:var(--accent);box-shadow:0 4px 12px var(--accent-shadow);}
-.cal-num{font-size:14px;font-weight:600;color:var(--text-primary);line-height:1;}
+.cal-num{font-size:14px;font-weight:600;color:var(--text-primary);line-height:1;font-variant-numeric:tabular-nums;}
 .cal-cell.today .cal-num{color:var(--accent);font-weight:800;}
 .cal-cell.selected .cal-num{color:#fff;font-weight:800;}
 .cal-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);}
@@ -301,7 +314,6 @@ body{
 .cal-note-input{width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:var(--text-primary);outline:none;resize:none;line-height:1.55;min-height:36px;}
 .cal-note-input::placeholder{color:var(--text-placeholder);}
 
-/* ===== 纪念日 ===== */
 .anniv-wrap{padding:0 20px 120px;display:flex;flex-direction:column;align-items:center;}
 .anniv-card{width:100%;max-width:340px;aspect-ratio:1/1;border-radius:32px;background:linear-gradient(135deg,var(--accent),color-mix(in srgb, var(--accent) 55%, #fff));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden;text-align:center;box-shadow:0 16px 40px var(--accent-shadow);margin:8px auto 0;}
 .anniv-bg{position:absolute;inset:-24px;background-size:cover;background-position:center;filter:blur(var(--anniv-blur,0px));z-index:0;transform:scale(1.1);}
@@ -916,7 +928,7 @@ function renderEntry(){
     const logo=document.createElement('div');logo.className='entry-logo';
     logo.innerHTML='<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>';
     c.appendChild(logo);
-    const title=document.createElement('div');title.className='entry-title';title.textContent='私密房间';c.appendChild(title);
+    const title=document.createElement('div');title.className='entry-title';title.textContent='喵喵机';c.appendChild(title);
     const sub=document.createElement('div');sub.className='entry-sub';sub.textContent='你和 Ta 的专属空间';c.appendChild(sub);
 
     if(hasRooms){
@@ -1131,7 +1143,7 @@ function renderFeed(){
   const ps=state.posts.filter(isPub).sort((a,b)=>(b.publishAt||b.createdAt||0)-(a.publishAt||a.createdAt||0));
   const c=$('feedList');
   if(!ps.length){
-    c.innerHTML='<div class="empty"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="empty-title">还没有新动态</div><div class="empty-sub">点右下角 + 发第一条吧</div></div>';
+    c.innerHTML='<div class="empty" style="grid-column:1/-1;"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="empty-title">还没有新动态</div><div class="empty-sub">点右下角 + 发第一条吧</div></div>';
     return;
   }
   c.innerHTML=ps.map(p=>renderCard(p)).join('');
@@ -1175,46 +1187,67 @@ function renderCard(p){
   '</div>';
 }
 
+/* ===== 个人主页（iCity 风，重写） ===== */
+function renderProfile(user,isMe){
+  const mine=state.posts.filter(p=>p.author===(isMe?currentUser:partnerKey()));
+  const totalComments=mine.reduce((s,p)=>s+countAllComments(p.comments||[]),0);
+  const totalRead=mine.reduce((s,p)=>s+(p.readBy?Object.keys(p.readBy).length:0),0);
+
+  const coverHtml=user.cover
+    ? '<img src="'+user.cover+'">'
+    : '<div class="profile-hero-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>';
+
+  const avHtml=user.avatar?'<img src="'+user.avatar+'">':avSvg();
+
+  let h='';
+  h+='<div class="profile-hero" '+(isMe?'id="meCover"':'')+'>';
+  h+=coverHtml;
+  h+='<div class="profile-hero-mask"></div>';
+  if(isMe)h+='<button class="profile-hero-edit" id="meCoverBtn">更换封面</button>';
+  h+='<div class="profile-hero-bottom">';
+  h+='<div class="profile-hero-av" '+(isMe?'id="meAv"':'')+'>'+avHtml+'</div>';
+  h+='<div class="profile-hero-name" '+(isMe?'id="meName"':'')+'>'+esc(user.name||(isMe?'我':'Ta'))+'</div>';
+  h+='</div></div>';
+
+  h+='<div class="profile-body">';
+  h+='<div class="profile-bio-card" '+(isMe?'id="meBio"':'')+'>';
+  h+='<div class="profile-bio-label">'+(isMe?'个性签名':'Ta 的签名')+'</div>';
+  h+='<div class="profile-bio '+(user.bio?'':'empty')+'">'+(user.bio?esc(user.bio):(isMe?'点击设置签名':'Ta 还没有写签名'))+'</div>';
+  h+='</div>';
+
+  h+='<div class="profile-stats">';
+  h+='<div class="stat-card"><div class="stat-num">'+mine.length+'</div><div class="stat-lbl">动态</div></div>';
+  h+='<div class="stat-card"><div class="stat-num">'+totalComments+'</div><div class="stat-lbl">评论</div></div>';
+  h+='<div class="stat-card"><div class="stat-num">'+totalRead+'</div><div class="stat-lbl">被读</div></div>';
+  h+='</div>';
+
+  h+='<div class="profile-tabs">';
+  h+='<button class="profile-tab active" data-view="grid2">双列</button>';
+  h+='<button class="profile-tab" data-view="grid1">单列</button>';
+  h+='</div>';
+
+  const sorted=mine.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  if(!sorted.length){
+    h+='<div class="empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">'+(isMe?'还没有发过动态':'Ta 还没有发过动态')+'</div></div>';
+  }else{
+    h+='<div class="profile-grid mode-2" id="'+(isMe?'meList':'pList')+'">'+sorted.map(p=>renderCard(p)).join('')+'</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
 function renderMe(){
   if(!state)return;
   const u=meUser();
   if(!u)return;
   const box=$('meProfile');
-  const mine=state.posts.filter(p=>p.author===currentUser);
-  const totalComments=mine.reduce((s,p)=>s+countAllComments(p.comments||[]),0);
-  const totalRead=mine.reduce((s,p)=>s+(p.readBy?Object.keys(p.readBy).length:0),0);
-  box.innerHTML=
-    '<div class="profile-cover" id="meCover">'+
-      (u.cover?'<img src="'+u.cover+'">':'<div class="profile-cover-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>')+
-      (u.cover?'<div class="edit-tag">更换背景</div>':'')+
-    '</div>'+
-    '<div class="profile-header">'+
-      '<div class="profile-av" id="meAv">'+(u.avatar?'<img src="'+u.avatar+'">':avSvg())+'</div>'+
-      '<div class="profile-text">'+
-        '<div class="profile-name" id="meName">'+esc(u.name||'设置昵称')+'</div>'+
-        '<div class="profile-bio '+(u.bio?'':'empty')+'" id="meBio">'+(u.bio?esc(u.bio):'点击设置签名')+'</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="profile-stats">'+
-      '<div class="stat-card"><div class="stat-num">'+mine.length+'</div><div class="stat-lbl">动态</div></div>'+
-      '<div class="stat-card"><div class="stat-num">'+totalComments+'</div><div class="stat-lbl">评论</div></div>'+
-      '<div class="stat-card"><div class="stat-num">'+totalRead+'</div><div class="stat-lbl">被读</div></div>'+
-    '</div>'+
-    '<div class="profile-section">我的动态</div>'+
-    '<div class="feed mode-1" id="meList" style="padding-bottom:120px;"></div>';
+  box.innerHTML=renderProfile(u,true);
   $('meCover').addEventListener('click',()=>pickImage('cover'));
+  const cb=$('meCoverBtn');if(cb)cb.addEventListener('click',e=>{e.stopPropagation();pickImage('cover');});
   $('meAv').addEventListener('click',()=>pickImage('avatar'));
   $('meName').addEventListener('click',editName);
   $('meBio').addEventListener('click',editBio);
-
-  const sorted=mine.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const c=$('meList');
-  if(!sorted.length){
-    c.innerHTML='<div class="empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">还没有发过动态</div></div>';
-    return;
-  }
-  c.innerHTML=sorted.map(p=>renderCard(p)).join('');
-  c.querySelectorAll('.post').forEach(el=>el.addEventListener('click',()=>openDetail(el.dataset.postId)));
+  bindProfileGrid('meList');
 }
 
 function renderPartner(){
@@ -1225,36 +1258,22 @@ function renderPartner(){
     box.innerHTML='<div class="empty" style="padding:120px 40px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.2a7.5 7.5 0 0 1 15 0"/></svg><div class="empty-title">Ta 还没有加入</div><div class="empty-sub">把邀请码分享给 Ta 吧</div></div>';
     return;
   }
-  const theirs=state.posts.filter(p=>p.author===partnerKey());
-  const totalComments=theirs.reduce((s,p)=>s+countAllComments(p.comments||[]),0);
-  const totalRead=theirs.reduce((s,p)=>s+(p.readBy?Object.keys(p.readBy).length:0),0);
-  box.innerHTML=
-    '<div class="profile-cover" id="pCover">'+
-      (u.cover?'<img src="'+u.cover+'">':'<div class="profile-cover-ph"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg></div>')+
-    '</div>'+
-    '<div class="profile-header">'+
-      '<div class="profile-av">'+(u.avatar?'<img src="'+u.avatar+'">':avSvg())+'</div>'+
-      '<div class="profile-text">'+
-        '<div class="profile-name">'+esc(u.name||'Ta')+'</div>'+
-        '<div class="profile-bio '+(u.bio?'':'empty')+'">'+(u.bio?esc(u.bio):'Ta 还没有写签名')+'</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="profile-stats">'+
-      '<div class="stat-card"><div class="stat-num">'+theirs.length+'</div><div class="stat-lbl">动态</div></div>'+
-      '<div class="stat-card"><div class="stat-num">'+totalComments+'</div><div class="stat-lbl">评论</div></div>'+
-      '<div class="stat-card"><div class="stat-num">'+totalRead+'</div><div class="stat-lbl">被读</div></div>'+
-    '</div>'+
-    '<div class="profile-section">Ta 的动态</div>'+
-    '<div class="feed mode-1" id="pList" style="padding-bottom:120px;"></div>';
+  box.innerHTML=renderProfile(u,false);
+  bindProfileGrid('pList');
+}
 
-  const sorted=theirs.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const c=$('pList');
-  if(!sorted.length){
-    c.innerHTML='<div class="empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><div class="empty-title">Ta 还没有发过动态</div></div>';
-    return;
-  }
-  c.innerHTML=sorted.map(p=>renderCard(p)).join('');
-  c.querySelectorAll('.post').forEach(el=>el.addEventListener('click',()=>openDetail(el.dataset.postId)));
+function bindProfileGrid(id){
+  const grid=$(id);if(!grid)return;
+  grid.querySelectorAll('.post').forEach(el=>el.addEventListener('click',()=>openDetail(el.dataset.postId)));
+  const tabs=grid.parentElement.querySelectorAll('.profile-tab');
+  tabs.forEach(t=>{
+    t.addEventListener('click',()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      grid.classList.remove('mode-1','mode-2');
+      grid.classList.add(t.dataset.view==='grid1'?'mode-1':'mode-2');
+    });
+  });
 }
 
 function openDetail(postId){
@@ -1398,6 +1417,7 @@ function renderOther(){
 $('segCal').addEventListener('click',()=>{currentSubTab='calendar';$('segCal').classList.add('active');$('segAnniv').classList.remove('active');renderOther();});
 $('segAnniv').addEventListener('click',()=>{currentSubTab='anniv';$('segAnniv').classList.add('active');$('segCal').classList.remove('active');renderOther();});
 
+/* ===== 日历：固定 6 行 × 7 列 ===== */
 function renderCalendar(){
   const c=$('viewCal');
   const first=new Date(calYear,calMonth,1);
@@ -1410,7 +1430,10 @@ function renderCalendar(){
   let h='<div class="cal-wrap">';
   h+='<div class="cal-nav"><div class="cal-month">'+calYear+'年 '+(calMonth+1)+'月</div><div class="cal-btns"><button class="cal-btn" id="calPrev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><button class="cal-btn" id="calNext"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button></div></div>';
   h+='<div class="cal-card"><div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div><div class="cal-grid">';
+
+  // 空白格
   for(let i=0;i<startW;i++)h+='<div class="cal-cell empty"></div>';
+  // 日期格
   for(let d=1;d<=days;d++){
     const ds=calYear+'-'+pad(calMonth+1)+'-'+pad(d);
     const todos=state.todos[ds]||[];
@@ -1424,6 +1447,11 @@ function renderCalendar(){
     }
     h+='<div class="'+cls+'" data-date="'+ds+'"><div class="cal-num">'+d+'</div>'+dot+'</div>';
   }
+  // 补齐到 42 格（6 行 × 7 列），保证高度稳定
+  const total=startW+days;
+  const rest=42-total;
+  for(let i=0;i<rest;i++)h+='<div class="cal-cell empty"></div>';
+
   h+='</div></div>';
 
   const sd=selectedDate;
