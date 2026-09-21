@@ -76,7 +76,7 @@ body{
 .feed{padding:0 var(--space-5) 120px;display:flex;gap:var(--space-4);align-items:flex-start;}
 .feed .feed-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--space-4);}
 
-.post{background:var(--bg-card);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:transform .18s var(--ease-ios),box-shadow .18s,opacity .2s;box-shadow:var(--shadow-subtle);border:1px solid var(--border);}
+.post{position:relative;background:var(--bg-card);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:transform .18s var(--ease-ios),box-shadow .18s,opacity .2s;box-shadow:var(--shadow-subtle);border:1px solid var(--border);}
 .post:active{transform:scale(.988);box-shadow:var(--shadow-subtle);}
 .post.hidden-post{opacity:.5;}
 .post.hidden-post .post-text{filter:blur(3px);}
@@ -105,28 +105,26 @@ body{
 .post-more:active{background:var(--bg-soft);}
 .post-more svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;}
 
+/* 帖子右上角未读通知气泡 */
+.post-badge{
+  position:absolute;top:8px;right:8px;z-index:6;
+  min-width:20px;height:20px;padding:0 6px;
+  border-radius:10px;background:var(--danger);color:#fff;
+  font-size:11px;font-weight:800;line-height:20px;text-align:center;
+  box-shadow:0 2px 8px rgba(255,69,58,.45),0 0 0 2px var(--bg-card);
+  animation:badgePop .32s var(--ease-ios);
+  pointer-events:none;
+}
+@keyframes badgePop{
+  0%{transform:scale(0);opacity:0;}
+  60%{transform:scale(1.18);opacity:1;}
+  100%{transform:scale(1);opacity:1;}
+}
+
 .empty{padding:100px var(--space-8);text-align:center;color:var(--text-secondary);}
 .empty svg{width:56px;height:56px;stroke-width:1.2;fill:none;stroke:var(--text-tertiary);margin-bottom:var(--space-6);}
 .empty-title{font-size:17px;font-weight:700;color:var(--text-primary);margin-bottom:var(--space-3);}
 .empty-sub{font-size:14px;color:var(--text-secondary);line-height:1.5;}
-
-.notify-wrap{padding:0 var(--space-5) 120px;}
-.notify-group{margin-bottom:var(--space-6);}
-.notify-group-title{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;padding:0 var(--space-5) var(--space-4);}
-.notify-item{display:flex;gap:var(--space-5);padding:var(--space-5) var(--space-6);background:var(--bg-card);border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative;}
-.notify-item:active{background:var(--bg-soft);}
-.notify-item:first-child{border-radius:var(--radius-md) var(--radius-md) 0 0;}
-.notify-item:last-child{border-radius:0 0 var(--radius-md) var(--radius-md);border-bottom:none;}
-.notify-av{width:36px;height:36px;border-radius:50%;background:var(--bg-soft);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-subtle);}
-.notify-av img{width:100%;height:100%;object-fit:cover;}
-.notify-av svg{width:18px;height:18px;stroke-width:1.6;fill:none;stroke:var(--text-tertiary);}
-.notify-body{flex:1;min-width:0;}
-.notify-name{font-size:13px;font-weight:700;color:var(--text-primary);}
-.notify-text{font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.45;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.notify-time{font-size:10.5px;color:var(--text-tertiary);margin-top:var(--space-2);}
-.notify-item.unread::after{content:'';position:absolute;top:50%;left:var(--space-4);transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--accent);}
-.notify-toolbar{display:flex;justify-content:flex-end;padding:0 var(--space-5) var(--space-5);}
-.notify-toolbar button{background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 8px;}
 
 .detail{position:absolute;inset:0;background:var(--bg-grouped);z-index:90;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .34s var(--ease-ios);}
 .detail.open{transform:translateX(0);}
@@ -200,15 +198,6 @@ body{
 .fab:active{transform:scale(.94);}
 .fab svg{width:24px;height:24px;stroke-width:2.4;fill:none;stroke:currentColor;stroke-linecap:round;}
 .fab.hidden{display:none;}
-
-.msg-pop{position:absolute;top:calc(env(safe-area-inset-top,0px) + 46px);left:var(--space-5);right:var(--space-5);background:var(--bg-blur);backdrop-filter:var(--blur-heavy);-webkit-backdrop-filter:var(--blur-heavy);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);display:flex;align-items:center;gap:var(--space-5);box-shadow:var(--shadow-elevated);border:1px solid var(--border);z-index:120;transform:translateY(-160%);transition:transform .42s var(--ease-ios),opacity .3s;cursor:pointer;opacity:0;}
-.msg-pop.show{transform:translateY(0);opacity:1;}
-.msg-pop-av{width:38px;height:38px;border-radius:50%;background:var(--bg-soft);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.msg-pop-av img{width:100%;height:100%;object-fit:cover;}
-.msg-pop-av svg{width:18px;height:18px;stroke-width:1.6;fill:none;stroke:var(--text-tertiary);}
-.msg-pop-body{flex:1;min-width:0;}
-.msg-pop-title{font-size:13px;font-weight:700;color:var(--text-primary);}
-.msg-pop-text{font-size:12px;color:var(--text-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 .settings{padding:0 var(--space-5) 120px;}
 .sg{margin-bottom:var(--space-7);}
@@ -403,13 +392,12 @@ body{
 .todo-list{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;}
 .todo-list::-webkit-scrollbar{display:none;}
 
-/* ========== 裁剪器 v2（微信/小红书风格） ========== */
+/* ========== 裁剪器 v2 ========== */
 .crop{
   position:absolute;inset:0;background:#000;z-index:200;
   display:none;flex-direction:column;color:#fff;
 }
 .crop.open{display:flex;}
-
 .crop-head{
   display:flex;align-items:center;justify-content:space-between;
   padding:env(safe-area-inset-top,0px) 16px 0;
@@ -423,13 +411,11 @@ body{
 }
 .crop-head button.primary{color:#0a84ff;font-weight:800;text-align:right;}
 .crop-title{font-size:16px;font-weight:700;color:#fff;}
-
 .crop-stage{
   flex:1;min-height:0;
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;padding:12px;
 }
-
 .crop-viewport{
   position:relative;
   width:min(82vw, 82vh, 380px);
@@ -441,7 +427,6 @@ body{
 }
 .crop-viewport.round{ border-radius:50%; }
 .crop-viewport.square{ border-radius:8px; }
-
 .crop-viewport img{
   position:absolute;
   top:50%;left:50%;
@@ -451,7 +436,6 @@ body{
   max-width:none;
   will-change:transform;
 }
-
 .crop-mask{
   position:absolute;inset:0;pointer-events:none;
 }
@@ -461,7 +445,6 @@ body{
 .crop-viewport.round .crop-mask{
   background:radial-gradient(circle at center, transparent 0, transparent calc(50% - 1px), rgba(0,0,0,.55) calc(50% - 1px));
 }
-
 .crop-frame{
   position:absolute;inset:0;pointer-events:none;
   border:1.5px solid rgba(255,255,255,.9);
@@ -480,7 +463,6 @@ body{
     linear-gradient(to bottom, transparent calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% + 0px), transparent calc(66.66% + 0px));
 }
 .crop-viewport.round .crop-frame .crop-grid{ display:none; }
-
 .crop-foot{
   display:flex;align-items:center;gap:14px;
   padding:14px 20px calc(20px + env(safe-area-inset-bottom,0px));
@@ -618,8 +600,6 @@ body{
     </div>
   </div>
 
-  <div class="msg-pop" id="msgPop"><div class="msg-pop-av" id="msgPopAv"></div><div class="msg-pop-body"><div class="msg-pop-title" id="msgPopTitle"></div><div class="msg-pop-text" id="msgPopText"></div></div></div>
-
   <div class="screen" id="screen" style="display:none;">
     <div class="page active" id="page-feed">
       <div class="page-hero">
@@ -630,14 +610,6 @@ body{
         <div class="hero-pair" id="heroPair"></div>
       </div>
       <div class="feed" id="feedList"></div>
-    </div>
-
-    <div class="page" id="page-notify">
-      <div class="page-hero">
-        <div class="hero-left"><div class="hero-title">通知</div><div class="hero-sub" id="notifySub">评论与互动</div></div>
-        <div class="hero-pair" id="notifyPair"></div>
-      </div>
-      <div class="notify-wrap" id="notifyList"></div>
     </div>
 
     <div class="page" id="page-other">
@@ -664,10 +636,6 @@ body{
     <button class="tab active" data-tab="feed">
       <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v7A2.5 2.5 0 0 1 17.5 17H9l-3.6 3.1A.8.8 0 0 1 4 19.5z"/><path d="M8 9.5h8M8 13h5"/></svg><span class="dot" id="feedDot" style="display:none;"></span></div>
       <span class="lbl">动态</span>
-    </button>
-    <button class="tab" data-tab="notify">
-      <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot" id="notifyDot" style="display:none;"></span></div>
-      <span class="lbl">通知</span>
     </button>
     <button class="tab" data-tab="other">
       <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/><circle cx="8.5" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r=".9" fill="currentColor" stroke="none"/><circle cx="15.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg></div>
@@ -782,7 +750,6 @@ let isSyncing=false;
 let lastSyncedJSON='';
 let syncTimer=null;
 let pollTimer=null;
-let msgPopTimer=null;
 
 let calAnchor=new Date();
 let editingPostId=null;
@@ -790,12 +757,11 @@ let editorImage=null;
 let editorScheduleAt=null;
 let detailPostId=null;
 let replyingTo=null;
-let unreadInteractions=0;
 
 const $=id=>document.getElementById(id);
 
 /* ============================================================
-   主题系统 v2 —— 单 style#themeVars 动态注入
+   主题系统
    ============================================================ */
 const PRESET_THEMES = {
   white: {
@@ -1044,7 +1010,6 @@ function isPub(p){return !p.publishAt||p.publishAt<=Date.now();}
 function partnerKey(){return currentUser==='user1'?'user2':'user1';}
 function partnerUser(){return state&&state.users?state.users[partnerKey()]:null;}
 function meUser(){return state&&state.users?state.users[currentUser]:null;}
-function userByKey(k){return state&&state.users?state.users[k]:null;}
 function genId(p){return (p||'id')+Date.now()+Math.random().toString(36).slice(2,7);}
 function avSvg(){return '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.2a7.5 7.5 0 0 1 15 0"/></svg>';}
 
@@ -1089,6 +1054,9 @@ function normRoom(data){
     if(!p.readBy)p.readBy={};
     if(!p.id)p.id=genId('p');
   });
+  // 清理通知里指向已删除帖子的项
+  const pidSet = new Set(d.posts.map(p=>p.id));
+  d.notifications = d.notifications.filter(n=>!n.postId || pidSet.has(n.postId));
   return d;
 }
 function migComments(arr){
@@ -1122,18 +1090,15 @@ async function pullRoom(){
     const n=normRoom(data);
     const js=JSON.stringify(n);
     if(js!==lastSyncedJSON){
-      const old=state;
       state=n;
       lastSyncedJSON=js;
       localStorage.setItem('cache_'+roomCode,js);
-      detectNewComments(old,n);
       rerenderCurrent();
     }
   }catch(e){}
 }
 function rerenderCurrent(){
   if(currentTab==='feed')renderFeed();
-  else if(currentTab==='notify')renderNotify();
   else if(currentTab==='me')renderMe();
   else if(currentTab==='partner')renderPartner();
   else if(currentTab==='other')renderOther();
@@ -1141,74 +1106,79 @@ function rerenderCurrent(){
   if(detailPostId&&$('detail').classList.contains('open'))renderDetail(detailPostId);
   updateBadges();
 }
-function detectNewComments(oldS,newS){
-  if(!oldS||!currentUser)return;
-  const pk=partnerKey();
-  let hasNew=false;
-  newS.posts.forEach(p=>{
-    if(p.author!==currentUser)return;
-    const oldP=oldS.posts?oldS.posts.find(x=>x.id===p.id):null;
-    const oldCnt=oldP?countAllComments(oldP.comments||[]):0;
-    const newCnt=countAllComments(p.comments||[]);
-    if(newCnt>oldCnt){
-      const latest=findLatestCommentBy(p.comments,pk);
-      if(latest){
-        if(!newS.notifications)newS.notifications=[];
-        const dup=newS.notifications.some(n=>n.type==='comment'&&n.from===pk&&n.postId===p.id&&n.text===latest.text);
-        if(!dup){
-          newS.notifications.unshift({id:genId('n'),type:'comment',postId:p.id,from:pk,text:latest.text,createdAt:Date.now(),read:false});
-          if(newS.notifications.length>80)newS.notifications.length=80;
-          showMsgPop(latest.text,pk,p.id);
-          hasNew=true;
-        }
-      }
-    }
-  });
-  if(hasNew){unreadInteractions++;updateBadges();}
+
+/* ============================================================
+   通知系统（写入时判定 + 角标）
+   - 通知来源：对方评论我的帖子 / 对方回复我的评论
+   - 只对本人可见的未读通知计数
+   - 打开帖子详情自动清除该帖通知
+   ============================================================ */
+function notifyCountForPost(postId){
+  if(!state||!currentUser)return 0;
+  return (state.notifications||[]).filter(n=>
+    !n.read && n.from!==currentUser && n.postId===postId
+  ).length;
 }
-function showMsgPop(text,fromKey,postId){
-  const u=userByKey(fromKey);
-  $('msgPopAv').innerHTML=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
-  $('msgPopTitle').textContent=(u?u.name:'Ta')+' 评论了你';
-  $('msgPopText').textContent=text;
-  const el=$('msgPop');
-  el.classList.add('show');
-  el.onclick=()=>{el.classList.remove('show');if(postId)openDetail(postId);};
-  clearTimeout(msgPopTimer);
-  msgPopTimer=setTimeout(()=>el.classList.remove('show'),4200);
+function notifyUnreadTotal(){
+  if(!state||!currentUser)return 0;
+  return (state.notifications||[]).filter(n=>!n.read && n.from!==currentUser).length;
+}
+function pushNotification(n){
+  if(!state)return;
+  if(!state.notifications)state.notifications=[];
+  // 幂等：同类型+同来源+同帖+同评论 视为重复
+  const dup=state.notifications.some(x=>
+    x.type===n.type && x.from===n.from && x.postId===n.postId &&
+    x.commentId===n.commentId
+  );
+  if(dup)return;
+  state.notifications.unshift(Object.assign({id:genId('n'),read:false,createdAt:Date.now()},n));
+  if(state.notifications.length>100)state.notifications.length=100;
+}
+// 评论发送后调用：为「帖主」「被回复者」生成通知
+function notifyOnNewComment(post, newComment){
+  if(!state||!currentUser)return;
+  if(newComment.author!==currentUser)return; // 只对本人操作生成通知（避免双端重复）
+  const from=currentUser;
+  // 1. 评论了对方帖子
+  if(post.author!==from){
+    pushNotification({type:'comment',postId:post.id,commentId:newComment.id,from:from,text:newComment.text});
+  }
+  // 2. 回复了对方评论
+  if(newComment.replyTo){
+    const target=findComment(post.comments,newComment.replyTo);
+    if(target && target.author!==from){
+      pushNotification({type:'reply',postId:post.id,commentId:newComment.id,replyToId:newComment.replyTo,from:from,text:newComment.text});
+    }
+  }
+}
+function markPostNotificationsRead(postId){
+  if(!state)return false;
+  let changed=false;
+  (state.notifications||[]).forEach(n=>{
+    if(n.postId===postId && !n.read && n.from!==currentUser){n.read=true;changed=true;}
+  });
+  if(changed){updateBadges();saveRoom();}
+  return changed;
 }
 function markAllRead(){
   if(!state)return;
   (state.notifications||[]).forEach(n=>{n.read=true;});
-  unreadInteractions=0;
   updateBadges();
   saveRoom();
+  rerenderCurrent();
 }
 function updateBadges(){
   if(!state)return;
-  const unread=(state.notifications||[]).filter(n=>!n.read).length;
-  const has=unread>0||unreadInteractions>0;
-  const fdot=$('feedDot'),ndot=$('notifyDot');
+  const unread=notifyUnreadTotal();
+  const fdot=$('feedDot');
   if(fdot){
-    fdot.style.display=has?'block':'none';
+    fdot.style.display=unread>0?'block':'none';
     fdot.textContent=unread>9?'9+':(unread||'');
     fdot.classList.toggle('num',unread>0);
   }
-  if(ndot){
-    ndot.style.display=has?'block':'none';
-    ndot.textContent=unread>9?'9+':(unread||'');
-    ndot.classList.toggle('num',unread>0);
-  }
 }
 function countAllComments(arr){let n=0;arr.forEach(c=>{n++;if(c.replies)n+=countAllComments(c.replies);});return n;}
-function findLatestCommentBy(arr,author){
-  let l=null;
-  arr.forEach(c=>{
-    if(c.author===author&&(!l||(c.createdAt||0)>(l.createdAt||0)))l=c;
-    if(c.replies){const r=findLatestCommentBy(c.replies,author);if(r&&(!l||(r.createdAt||0)>(l.createdAt||0)))l=r;}
-  });
-  return l;
-}
 function findComment(arr,id){for(const c of arr){if(c.id===id)return c;const r=findComment(c.replies||[],id);if(r)return r;}return null;}
 function rmComment(arr,id){for(let i=0;i<arr.length;i++){if(arr[i].id===id){arr.splice(i,1);return true;}if(arr[i].replies&&rmComment(arr[i].replies,id))return true;}return false;}
 
@@ -1231,7 +1201,6 @@ function renderEntry(){
   function draw(){
     c.innerHTML='';
     const logo=document.createElement('div');logo.className='entry-logo';
-    // 🐱 替换为你的 emoji 或图标
     logo.innerHTML='<span style="font-size:38px;line-height:1;">🐱</span>';
     c.appendChild(logo);
     const title=document.createElement('div');title.className='entry-title';title.textContent='去听、去看、去说';c.appendChild(title);
@@ -1399,7 +1368,6 @@ function switchTab(tab){
   else $('page-'+tab).classList.add('active');
   $('screen').scrollTop=0;
   if(tab==='feed'){renderFeed();}
-  else if(tab==='notify'){renderNotify();}
   else if(tab==='other')renderOther();
   else if(tab==='me')renderMe();
   else if(tab==='partner')renderPartner();
@@ -1502,6 +1470,8 @@ function bindFeedEvents(c){
           openActionSheet([
             {text:'确认删除这条动态？',danger:true,fn:()=>{
               state.posts=state.posts.filter(x=>x.id!==pid);
+              // 一并清理与该帖相关的通知
+              state.notifications=(state.notifications||[]).filter(n=>n.postId!==pid);
               saveRoom();rerenderCurrent();
             }},
             {text:'取消',cancel:true}
@@ -1530,7 +1500,13 @@ function renderCard(p){
     else if(p.readBy&&p.readBy[pk])readTag='<span class="post-read read">已读</span>';
     else readTag='<span class="post-read">未读</span>';
   }
+  // 帖子右上角未读角标：只显示「别人（Ta）针对这条帖子给我」的未读通知数
+  const badgeN=notifyCountForPost(p.id);
+  const badgeHtml = badgeN>0
+    ? '<span class="post-badge">'+(badgeN>9?'9+':badgeN)+'</span>'
+    : '';
   return '<div class="post'+(p.hidden?' hidden-post':'')+'" data-post-id="'+p.id+'">'+
+    badgeHtml+
     (p.image?'<div class="post-media"><img src="'+p.image+'"></div>':'')+
     '<div class="post-body"><div class="post-head"><div class="post-av" data-uid="'+p.author+'">'+av+'</div><div class="post-meta"><div class="post-name" data-uid="'+p.author+'">'+esc(name)+'</div><div class="post-time '+(t.scheduled?'scheduled':'')+'">'+esc(t.text)+'</div></div></div>'+
     (p.text?'<div class="post-text">'+esc(p.text)+'</div>':'')+
@@ -1541,49 +1517,6 @@ function renderCard(p){
       '<button class="post-more" data-post-id="'+p.id+'"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>'+
     '</div>'+
   '</div>';
-}
-
-/* ============================================================
-   通知中心
-   ============================================================ */
-function renderNotify(){
-  if(!state)return;
-  renderHeroPair($('notifyPair'));
-  const c=$('notifyList');
-  const ns=(state.notifications||[]).slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  if(!ns.length){
-    c.innerHTML='<div class="empty" style="padding:60px 20px;"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="empty-title">暂无通知</div><div class="empty-sub">当 Ta 评论你的动态时会显示在这里</div></div>';
-    return;
-  }
-  const unread=ns.filter(n=>!n.read).length;
-  let h='';
-  if(unread>0)h+='<div class="notify-toolbar"><button id="markAllReadBtn">全部已读</button></div>';
-  h+='<div class="notify-group"><div class="notify-group-title">全部通知</div>';
-  ns.forEach(n=>{
-    const u=state.users[n.from];
-    const name=u?u.name:'Ta';
-    const av=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
-    const isUnread=!n.read;
-    h+='<div class="notify-item '+(isUnread?'unread':'')+'" data-id="'+n.id+'" data-post="'+(n.postId||'')+'">'+
-      '<div class="notify-av">'+av+'</div>'+
-      '<div class="notify-body"><div class="notify-name">'+esc(name)+' 评论了你</div><div class="notify-text">'+esc(n.text||'')+'</div><div class="notify-time">'+fmtRel(n.createdAt||Date.now())+'</div></div>'+
-    '</div>';
-  });
-  h+='</div>';
-  c.innerHTML=h;
-  const mab=$('markAllReadBtn');
-  if(mab)mab.addEventListener('click',()=>{markAllRead();renderNotify();});
-  c.querySelectorAll('.notify-item').forEach(el=>{
-    el.addEventListener('click',()=>{
-      const nid=el.dataset.id;
-      const n=(state.notifications||[]).find(x=>x.id===nid);
-      if(n&&!n.read){n.read=true;saveRoom();}
-      const pid=el.dataset.post;
-      if(pid)openDetail(pid);
-      updateBadges();
-      renderNotify();
-    });
-  });
 }
 
 /* ============================================================
@@ -1675,6 +1608,8 @@ function openDetail(postId){
   if(p.hidden&&p.author!==currentUser)return;
   detailPostId=postId;
   replyingTo=null;
+  // 打开详情即标记该帖所有通知为已读
+  markPostNotificationsRead(postId);
   renderDetail(postId);
   $('detail').classList.add('open');
   $('detailInput').value='';
@@ -1719,7 +1654,8 @@ function renderComment(c,postId){
   const canDel=isMe;
   let quoteHtml='';
   if(c.replyTo){
-    const parent=findComment((state.posts.find(x=>x.id===postId).comments||[]),c.replyTo);
+    const post=state.posts.find(x=>x.id===postId);
+    const parent=post?findComment(post.comments||[],c.replyTo):null;
     if(parent){
       const pu=state.users[parent.author];
       quoteHtml='<div class="cmt-reply-quote"><div class="bar"></div><div class="q-body"><div class="q-name">'+esc(pu?pu.name:'Ta')+'</div><div class="q-text">'+esc(parent.text||'')+'</div></div></div>';
@@ -1747,6 +1683,8 @@ function bindDetailEvents(){
           const p=state.posts.find(x=>x.id===b.dataset.postId);
           if(!p)return;
           rmComment(p.comments,b.dataset.commentId);
+          // 一并清理该评论产生的通知
+          state.notifications=(state.notifications||[]).filter(n=>n.commentId!==b.dataset.commentId);
           saveRoom();renderDetail(detailPostId);
         }},
         {text:'取消',cancel:true}
@@ -1799,10 +1737,14 @@ $('detailSend').addEventListener('click',()=>{
     nc.replyTo=replyingTo.commentId;
   }
   p.comments.push(nc);
+  // 关键：写入评论后立刻判定通知（自己发的评论才生成，避免双端重复）
+  notifyOnNewComment(p,nc);
   replyingTo=null;
   $('detailInput').value='';$('detailSend').disabled=true;
   renderReplyPreview();
-  saveRoom();renderDetail(detailPostId);
+  saveRoom();
+  renderDetail(detailPostId);
+  updateBadges();
 });
 $('detailBack').addEventListener('click',closeDetail);
 
@@ -2304,7 +2246,7 @@ $('editorPub').addEventListener('click',()=>{
 });
 
 /* ============================================================
-   裁剪器 v2（微信/小红书风格）
+   裁剪器 v2
    ============================================================ */
 const cropCtl = {
   img: null,
