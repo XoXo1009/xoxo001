@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵喵说">
 <style>
-/* ========== 设计Token体系 ========== */
-:root,[data-theme="white"]{
+/* ========== 基础 Token（与主题无关，固定不变） ========== */
+:root{
   --radius-xs:6px; --radius-sm:10px; --radius-md:14px; --radius-lg:18px; --radius-xl:22px; --radius-full:9999px;
   --space-2:4px; --space-3:6px; --space-4:8px; --space-5:12px; --space-6:16px; --space-7:20px; --space-8:24px;
   --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
@@ -20,45 +20,7 @@
   --shadow-elevated: 0 8px 24px rgba(0,0,0,0.08);
   --blur-light: saturate(180%) blur(16px);
   --blur-heavy: saturate(200%) blur(24px);
-  --bg-base:#ffffff; --bg-grouped:#f5f5f7; --bg-card:#ffffff; --bg-soft:#f2f2f7; --bg-input:#f2f2f7;
-  --bg-overlay:rgba(0,0,0,.3); --bg-blur:rgba(255,255,255,.78);
-  --text-primary:#000000; --text-secondary:#8a8a8e; --text-tertiary:#c4c4c6; --text-placeholder:#b0b0b8;
-  --accent:#007aff; --accent-soft:rgba(0,122,255,.1); --accent-shadow:rgba(0,122,255,.12);
-  --border:rgba(60,60,67,.09); --border-strong:rgba(60,60,67,.16);
-  --danger:#ff453a; --success:#34c759; --warn:#ff9500;
-  --bubble-me:#007aff; --bubble-me-text:#fff; --bubble-ta:#f2f2f7; --bubble-ta-text:#000;
-  --quote-bg:rgba(0,0,0,.06); --quote-line:#b0b0b8;
   --ease-ios: cubic-bezier(0.17, 0.89, 0.32, 1.00);
-}
-[data-theme="cream"]{
-  --bg-base:#fdfbf6; --bg-grouped:#f6f2e9; --bg-card:#ffffff; --bg-soft:#f6f2e9; --bg-input:#f1ebdd;
-  --bg-overlay:rgba(60,40,20,.3); --bg-blur:rgba(253,251,246,.82);
-  --text-primary:#2b2418; --text-secondary:#8a7f6a; --text-tertiary:#c7bda8; --text-placeholder:#b8ad96;
-  --accent:#c67c3e; --accent-soft:rgba(198,124,62,.12); --accent-shadow:rgba(198,124,62,.15);
-  --border:rgba(80,60,30,.1); --border-strong:rgba(80,60,30,.18);
-  --danger:#d94a3d; --success:#6a9e5a; --warn:#d18b2e;
-  --bubble-me:#c67c3e; --bubble-me-text:#fff; --bubble-ta:#f6f2e9; --bubble-ta-text:#2b2418;
-  --quote-bg:rgba(80,60,30,.07); --quote-line:#c7bda8;
-}
-[data-theme="graphite"]{
-  --bg-base:#f5f5f7; --bg-grouped:#eaeaec; --bg-card:#ffffff; --bg-soft:#eaeaec; --bg-input:#e5e5e7;
-  --bg-overlay:rgba(0,0,0,.3); --bg-blur:rgba(245,245,247,.82);
-  --text-primary:#1d1d1f; --text-secondary:#6e6e73; --text-tertiary:#b8b8bc; --text-placeholder:#a5a5a9;
-  --accent:#1d1d1f; --accent-soft:rgba(29,29,31,.08); --accent-shadow:rgba(29,29,31,.12);
-  --border:rgba(0,0,0,.08); --border-strong:rgba(0,0,0,.15);
-  --danger:#ff453a; --success:#34c759; --warn:#ff9500;
-  --bubble-me:#1d1d1f; --bubble-me-text:#fff; --bubble-ta:#eaeaec; --bubble-ta-text:#1d1d1f;
-  --quote-bg:rgba(0,0,0,.06); --quote-line:#b8b8bc;
-}
-[data-theme="midnight"]{
-  --bg-base:#000000; --bg-grouped:#0d0d0f; --bg-card:#1c1c1e; --bg-soft:#2c2c2e; --bg-input:#2c2c2e;
-  --bg-overlay:rgba(0,0,0,.5); --bg-blur:rgba(28,28,30,.78);
-  --text-primary:#ffffff; --text-secondary:#8e8e93; --text-tertiary:#48484a; --text-placeholder:#636366;
-  --accent:#0a84ff; --accent-soft:rgba(10,132,255,.22); --accent-shadow:rgba(10,132,255,.2);
-  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
-  --danger:#ff453a; --success:#32d74b; --warn:#ff9f0a;
-  --bubble-me:#0a84ff; --bubble-me-text:#fff; --bubble-ta:#3a3a3c; --bubble-ta-text:#ffffff;
-  --quote-bg:rgba(255,255,255,.12); --quote-line:#8e8e93;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -441,34 +403,113 @@ body{
 .todo-list{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;}
 .todo-list::-webkit-scrollbar{display:none;}
 
-.crop{position:absolute;inset:0;background:#000;z-index:200;display:none;flex-direction:column;padding:var(--space-6);color:#fff;}
+/* ========== 裁剪器 v2（微信/小红书风格） ========== */
+.crop{
+  position:absolute;inset:0;background:#000;z-index:200;
+  display:none;flex-direction:column;color:#fff;
+}
 .crop.open{display:flex;}
-.crop-head{display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,0px) 0 0;height:calc(env(safe-area-inset-top,0px) + 44px);flex-shrink:0;}
-.crop-head button{background:none;border:none;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;padding:var(--space-4);}
-.crop-head .primary{color:#0a84ff;font-weight:800;}
-.crop-area{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.crop-wrap{position:relative;line-height:0;touch-action:none;user-select:none;}
-.crop-wrap img{max-width:100%;max-height:70vh;display:block;border-radius:var(--radius-md);pointer-events:none;}
-.crop-sel{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.58);box-sizing:border-box;touch-action:none;}
-.crop-h{position:absolute;width:28px;height:28px;z-index:2;touch-action:none;}
-.crop-h::after{content:'';position:absolute;width:18px;height:18px;border:3px solid #fff;border-radius:3px;}
-.crop-h.tl{top:-14px;left:-14px;}.crop-h.tl::after{top:11px;left:11px;border-right:none;border-bottom:none;}
-.crop-h.tr{top:-14px;right:-14px;}.crop-h.tr::after{top:11px;right:11px;border-left:none;border-bottom:none;}
-.crop-h.bl{bottom:-14px;left:-14px;}.crop-h.bl::after{bottom:11px;left:11px;border-right:none;border-top:none;}
-.crop-h.br{bottom:-14px;right:-14px;}.crop-h.br::after{bottom:11px;right:11px;border-left:none;border-top:none;}
-.crop-h.edge{width:24px;height:24px;}
-.crop-h.edge::after{width:14px;height:14px;border:3px solid #fff;border-radius:3px;}
-.crop-h.edge.t{top:-12px;left:50%;transform:translateX(-50%);}
-.crop-h.edge.t::after{top:9px;left:50%;transform:translateX(-50%);border-bottom:none;}
-.crop-h.edge.b{bottom:-12px;left:50%;transform:translateX(-50%);}
-.crop-h.edge.b::after{bottom:9px;left:50%;transform:translateX(-50%);border-top:none;}
-.crop-h.edge.l{left:-12px;top:50%;transform:translateY(-50%);}
-.crop-h.edge.l::after{left:9px;top:50%;transform:translateY(-50%);border-right:none;}
-.crop-h.edge.r{right:-12px;top:50%;transform:translateY(-50%);}
-.crop-h.edge.r::after{right:9px;top:50%;transform:translateY(-50%);border-left:none;}
-.crop-hint{text-align:center;font-size:12px;color:rgba(255,255,255,.6);margin-top:var(--space-6);padding:0 var(--space-7);}
-.crop-ratio{font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.14);border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;}
 
+.crop-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:env(safe-area-inset-top,0px) 16px 0;
+  height:calc(env(safe-area-inset-top,0px) + 52px);
+  flex-shrink:0;
+}
+.crop-head button{
+  background:none;border:none;color:#fff;font-size:15px;
+  font-weight:600;cursor:pointer;font-family:inherit;
+  padding:8px 4px;min-width:52px;text-align:left;
+}
+.crop-head button.primary{color:#0a84ff;font-weight:800;text-align:right;}
+.crop-title{font-size:16px;font-weight:700;color:#fff;}
+
+.crop-stage{
+  flex:1;min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;padding:12px;
+}
+
+.crop-viewport{
+  position:relative;
+  width:min(82vw, 82vh, 380px);
+  height:min(82vw, 82vh, 380px);
+  overflow:hidden;
+  touch-action:none;
+  user-select:none;
+  background:#111;
+}
+.crop-viewport.round{ border-radius:50%; }
+.crop-viewport.square{ border-radius:8px; }
+
+.crop-viewport img{
+  position:absolute;
+  top:50%;left:50%;
+  transform-origin:center center;
+  pointer-events:none;
+  -webkit-user-drag:none;
+  max-width:none;
+  will-change:transform;
+}
+
+.crop-mask{
+  position:absolute;inset:0;pointer-events:none;
+}
+.crop-viewport.square .crop-mask{
+  box-shadow:inset 0 0 0 9999px rgba(0,0,0,.55);
+}
+.crop-viewport.round .crop-mask{
+  background:radial-gradient(circle at center, transparent 0, transparent calc(50% - 1px), rgba(0,0,0,.55) calc(50% - 1px));
+}
+
+.crop-frame{
+  position:absolute;inset:0;pointer-events:none;
+  border:1.5px solid rgba(255,255,255,.9);
+}
+.crop-viewport.round .crop-frame{ border:none; }
+.crop-viewport.round .crop-frame::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.9);
+}
+.crop-viewport.square .crop-frame .crop-grid{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right, transparent calc(33.33% - 1px), rgba(255,255,255,.25) calc(33.33% - 1px), rgba(255,255,255,.25) calc(33.33% + 0px), transparent calc(33.33% + 0px)),
+    linear-gradient(to right, transparent calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% + 0px), transparent calc(66.66% + 0px)),
+    linear-gradient(to bottom, transparent calc(33.33% - 1px), rgba(255,255,255,.25) calc(33.33% - 1px), rgba(255,255,255,.25) calc(33.33% + 0px), transparent calc(33.33% + 0px)),
+    linear-gradient(to bottom, transparent calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% - 1px), rgba(255,255,255,.25) calc(66.66% + 0px), transparent calc(66.66% + 0px));
+}
+.crop-viewport.round .crop-frame .crop-grid{ display:none; }
+
+.crop-foot{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px calc(20px + env(safe-area-inset-bottom,0px));
+  flex-shrink:0;
+}
+.crop-reset{
+  background:rgba(255,255,255,.14);border:none;color:#fff;
+  font-size:13px;font-weight:600;font-family:inherit;
+  padding:9px 16px;border-radius:10px;cursor:pointer;
+}
+.crop-reset:active{background:rgba(255,255,255,.24);}
+.crop-zoom{flex:1;display:flex;align-items:center;gap:10px;}
+.crop-zoom svg{
+  width:18px;height:18px;stroke:rgba(255,255,255,.75);
+  stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  flex-shrink:0;
+}
+.crop-zoom input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;
+  height:3px;border-radius:2px;background:rgba(255,255,255,.25);outline:none;
+}
+.crop-zoom input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+
+/* ========== 主题选择器 ========== */
 .theme-picker{position:absolute;inset:0;z-index:200;pointer-events:none;}
 .theme-picker.open{pointer-events:auto;}
 .theme-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);opacity:0;transition:opacity .3s;}
@@ -493,7 +534,7 @@ body{
 .custom-row label{flex:1;font-size:13px;font-weight:600;color:var(--text-primary);}
 .custom-row input[type=color]{width:46px;height:32px;border:none;border-radius:var(--radius-sm);cursor:pointer;background:transparent;padding:0;}
 
-/* ===== 入口页 ===== */
+/* ========== 入口页 ========== */
 .entry{
   position:absolute;inset:0;z-index:150;display:flex;flex-direction:column;
   padding:0 var(--space-7);overflow-y:auto;
@@ -561,8 +602,9 @@ body{
 .loading-text{font-size:13px;color:var(--text-secondary);font-weight:600;}
 .hidden-input{display:none;}
 </style>
+<style id="themeVars"></style>
 </head>
-<body data-theme="white">
+<body>
 <div class="phone" id="phone">
   <div class="loading" id="loading"><div class="spinner"></div><div class="loading-text" id="loadingText">连接中…</div></div>
   <div class="entry hidden" id="entry"><div class="entry-inner" id="entryInner"></div></div>
@@ -674,22 +716,32 @@ body{
     <div class="todo-panel"><div class="todo-grab"></div><div class="todo-title" id="todoTitle"></div><div class="todo-sub" id="todoSub"></div><div class="todo-input-row"><input type="text" class="todo-input" id="todoInput" placeholder="添加待办…" maxlength="60"><button class="todo-add" id="todoAdd">添加</button></div><div class="todo-list" id="todoList"></div></div>
   </div>
   <div class="sheet" id="sheet"><div class="sheet-box" id="sheetBox"></div></div>
+
   <div class="crop" id="crop">
     <div class="crop-head">
       <button id="cropCancel">取消</button>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <button class="crop-ratio" id="cropRatio">自由</button>
-        <button class="primary" id="cropConfirm">应用</button>
+      <div class="crop-title" id="cropTitle">裁剪</div>
+      <button class="primary" id="cropConfirm">完成</button>
+    </div>
+    <div class="crop-stage" id="cropStage">
+      <div class="crop-viewport" id="cropViewport">
+        <img id="cropImg" src="" alt="">
+        <div class="crop-mask" id="cropMask"></div>
+        <div class="crop-frame" id="cropFrame">
+          <div class="crop-grid"></div>
+        </div>
       </div>
     </div>
-    <div class="crop-area"><div class="crop-wrap" id="cropWrap"><img id="cropImg" src=""><div class="crop-sel" id="cropSel">
-      <div class="crop-h tl" data-dir="tl"></div><div class="crop-h tr" data-dir="tr"></div>
-      <div class="crop-h bl" data-dir="bl"></div><div class="crop-h br" data-dir="br"></div>
-      <div class="crop-h edge t" data-dir="t"></div><div class="crop-h edge b" data-dir="b"></div>
-      <div class="crop-h edge l" data-dir="l"></div><div class="crop-h edge r" data-dir="r"></div>
-    </div></div></div>
-    <div class="crop-hint">拖动选框调整区域 · 双指缩放 · 点击右上角切换比例</div>
+    <div class="crop-foot">
+      <button class="crop-reset" id="cropReset">还原</button>
+      <div class="crop-zoom">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6M11 8v6"/></svg>
+        <input type="range" id="cropZoom" min="1" max="3" step="0.01" value="1">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
+      </div>
+    </div>
   </div>
+
   <div class="theme-picker" id="themePicker">
     <div class="theme-overlay" id="themeOverlay"></div>
     <div class="theme-panel"><div class="theme-grab"></div><div class="theme-title">主题</div><div class="theme-grid" id="themeGrid"></div>
@@ -717,17 +769,6 @@ const ROOMS_KEY='room_my_rooms_v8';
 const LAST_ROOM_KEY='room_last_room_v8';
 const IDENTITY_KEY='room_identity_v8';
 
-const THEMES=[
-  {id:'white',name:'纯白',bg:'#ffffff',card:'#ffffff',accent:'#007aff'},
-  {id:'cream',name:'奶油',bg:'#fdfbf6',card:'#ffffff',accent:'#c67c3e'},
-  {id:'graphite',name:'石墨',bg:'#f5f5f7',card:'#ffffff',accent:'#1d1d1f'},
-  {id:'midnight',name:'午夜',bg:'#000000',card:'#1c1c1e',accent:'#0a84ff'}
-];
-
-let customTheme=JSON.parse(localStorage.getItem(CUSTOM_THEME_KEY)||'null')||{
-  bg:'#ffffff',card:'#ffffff',accent:'#007aff',text:'#000000',
-  bubbleMe:'#007aff',bubbleTa:'#f2f2f7'
-};
 let myRooms=JSON.parse(localStorage.getItem(ROOMS_KEY)||'{}');
 let myIdentities=JSON.parse(localStorage.getItem(IDENTITY_KEY)||'{}');
 
@@ -753,95 +794,228 @@ let unreadInteractions=0;
 
 const $=id=>document.getElementById(id);
 
-function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');return{r:parseInt(hex.slice(0,2),16),g:parseInt(hex.slice(2,4),16),b:parseInt(hex.slice(4,6),16)};}
-function rgba(hex,a){const{r,g,b}=hexToRgb(hex);return `rgba(${r},${g},${b},${a})`;}
-function isDark(hex){const{r,g,b}=hexToRgb(hex);return(r*.299+g*.587+b*.114)<128;}
-
-/* ===== 主题应用（修复 custom） ===== */
-function applyTheme(id){
-  const root=document.documentElement;
-  const vars=['--bg-base','--bg-grouped','--bg-card','--bg-soft','--bg-input','--bg-blur',
-    '--text-primary','--text-secondary','--text-tertiary','--text-placeholder',
-    '--accent','--accent-soft','--accent-shadow','--border','--border-strong',
-    '--danger','--success','--warn','--bubble-me','--bubble-me-text','--bubble-ta','--bubble-ta-text',
-    '--quote-bg','--quote-line','--bg-overlay'];
-  vars.forEach(k=>root.style.removeProperty(k));
-
-  if(id==='custom'){
-    document.body.setAttribute('data-theme','white');
-    applyCustomTheme();
-  }else{
-    document.body.setAttribute('data-theme',id);
+/* ============================================================
+   主题系统 v2 —— 单 style#themeVars 动态注入
+   ============================================================ */
+const PRESET_THEMES = {
+  white: {
+    name:'纯白',
+    bg:'#ffffff', grouped:'#f5f5f7', card:'#ffffff', soft:'#f2f2f7', input:'#f2f2f7',
+    text:'#000000', textSub:'#8a8a8e', textTer:'#c4c4c6', textPh:'#b0b0b8',
+    accent:'#007aff', bubbleMe:'#007aff', bubbleMeText:'#ffffff',
+    bubbleTa:'#f2f2f7', bubbleTaText:'#000000',
+    border:'rgba(60,60,67,.09)', borderStrong:'rgba(60,60,67,.16)',
+    overlay:'rgba(0,0,0,.3)', blur:'rgba(255,255,255,.78)'
+  },
+  cream: {
+    name:'奶油',
+    bg:'#fdfbf6', grouped:'#f6f2e9', card:'#ffffff', soft:'#f6f2e9', input:'#f1ebdd',
+    text:'#2b2418', textSub:'#8a7f6a', textTer:'#c7bda8', textPh:'#b8ad96',
+    accent:'#c67c3e', bubbleMe:'#c67c3e', bubbleMeText:'#ffffff',
+    bubbleTa:'#f6f2e9', bubbleTaText:'#2b2418',
+    border:'rgba(80,60,30,.1)', borderStrong:'rgba(80,60,30,.18)',
+    overlay:'rgba(60,40,20,.3)', blur:'rgba(253,251,246,.82)'
+  },
+  graphite: {
+    name:'石墨',
+    bg:'#f5f5f7', grouped:'#eaeaec', card:'#ffffff', soft:'#eaeaec', input:'#e5e5e7',
+    text:'#1d1d1f', textSub:'#6e6e73', textTer:'#b8b8bc', textPh:'#a5a5a9',
+    accent:'#1d1d1f', bubbleMe:'#1d1d1f', bubbleMeText:'#ffffff',
+    bubbleTa:'#eaeaec', bubbleTaText:'#1d1d1f',
+    border:'rgba(0,0,0,.08)', borderStrong:'rgba(0,0,0,.15)',
+    overlay:'rgba(0,0,0,.3)', blur:'rgba(245,245,247,.82)'
+  },
+  midnight: {
+    name:'午夜',
+    bg:'#000000', grouped:'#0d0d0f', card:'#1c1c1e', soft:'#2c2c2e', input:'#2c2c2e',
+    text:'#ffffff', textSub:'#8e8e93', textTer:'#48484a', textPh:'#636366',
+    accent:'#0a84ff', bubbleMe:'#0a84ff', bubbleMeText:'#ffffff',
+    bubbleTa:'#3a3a3c', bubbleTaText:'#ffffff',
+    border:'rgba(255,255,255,.09)', borderStrong:'rgba(255,255,255,.16)',
+    overlay:'rgba(0,0,0,.5)', blur:'rgba(28,28,30,.78)'
   }
-  localStorage.setItem(THEME_KEY,id);
+};
+
+const DEFAULT_CUSTOM = {
+  name:'自定义',
+  bg:'#ffffff', card:'#ffffff', accent:'#007aff', text:'#000000',
+  bubbleMe:'#007aff', bubbleTa:'#f2f2f7'
+};
+
+let customTheme = (()=>{
+  try{ return Object.assign({}, DEFAULT_CUSTOM, JSON.parse(localStorage.getItem(CUSTOM_THEME_KEY)||'{}')); }
+  catch(e){ return Object.assign({}, DEFAULT_CUSTOM); }
+})();
+
+function hex2rgb(hex){
+  hex = String(hex).replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  return {r:parseInt(hex.slice(0,2),16), g:parseInt(hex.slice(2,4),16), b:parseInt(hex.slice(4,6),16)};
 }
-function applyCustomTheme(){
-  const ct=customTheme,d=isDark(ct.bg),r=document.documentElement.style;
-  r.setProperty('--bg-base',ct.bg);
-  r.setProperty('--bg-grouped',d?rgba('#ffffff',.04):rgba('#000000',.03));
-  r.setProperty('--bg-card',ct.card);
-  r.setProperty('--bg-soft',d?rgba('#ffffff',.08):rgba('#000000',.04));
-  r.setProperty('--bg-input',d?rgba('#ffffff',.1):rgba('#000000',.05));
-  r.setProperty('--bg-blur',rgba(ct.bg,.85));
-  r.setProperty('--bg-overlay',d?'rgba(0,0,0,.5)':'rgba(0,0,0,.3)');
-  r.setProperty('--text-primary',ct.text);
-  r.setProperty('--text-secondary',rgba(ct.text,d?.6:.55));
-  r.setProperty('--text-tertiary',rgba(ct.text,.35));
-  r.setProperty('--text-placeholder',rgba(ct.text,d?.4:.45));
-  r.setProperty('--accent',ct.accent);
-  r.setProperty('--accent-soft',rgba(ct.accent,.18));
-  r.setProperty('--accent-shadow',rgba(ct.accent,.12));
-  r.setProperty('--border',d?rgba('#ffffff',.1):rgba('#000000',.07));
-  r.setProperty('--border-strong',d?rgba('#ffffff',.18):rgba('#000000',.15));
-  r.setProperty('--danger','#ff453a');
-  r.setProperty('--success',d?'#32d74b':'#34c759');
-  r.setProperty('--warn',d?'#ff9f0a':'#ff9500');
-  r.setProperty('--bubble-me',ct.bubbleMe||ct.accent);
-  r.setProperty('--bubble-me-text','#fff');
-  r.setProperty('--bubble-ta',ct.bubbleTa||(d?rgba('#ffffff',.14):rgba('#000000',.05)));
-  r.setProperty('--bubble-ta-text',ct.text);
-  r.setProperty('--quote-bg',d?rgba('#ffffff',.14):rgba('#000000',.06));
-  r.setProperty('--quote-line',d?'#8e8e93':'#b0b0b8');
+function rgbaOf(hex, a){
+  const {r,g,b} = hex2rgb(hex);
+  return `rgba(${r},${g},${b},${a})`;
 }
+function isDarkColor(hex){
+  const {r,g,b} = hex2rgb(hex);
+  return (r*0.299 + g*0.587 + b*0.114) < 128;
+}
+
+function paintTheme(vars){
+  const css = `:root{
+    --bg-base:${vars.bg};
+    --bg-grouped:${vars.grouped};
+    --bg-card:${vars.card};
+    --bg-soft:${vars.soft};
+    --bg-input:${vars.input};
+    --bg-overlay:${vars.overlay};
+    --bg-blur:${vars.blur};
+    --text-primary:${vars.text};
+    --text-secondary:${vars.textSub};
+    --text-tertiary:${vars.textTer};
+    --text-placeholder:${vars.textPh};
+    --accent:${vars.accent};
+    --accent-soft:${rgbaOf(vars.accent, .14)};
+    --accent-shadow:${rgbaOf(vars.accent, .18)};
+    --border:${vars.border};
+    --border-strong:${vars.borderStrong};
+    --danger:#ff453a;
+    --success:#34c759;
+    --warn:#ff9500;
+    --bubble-me:${vars.bubbleMe};
+    --bubble-me-text:${vars.bubbleMeText};
+    --bubble-ta:${vars.bubbleTa};
+    --bubble-ta-text:${vars.bubbleTaText};
+    --quote-bg:${rgbaOf(vars.text, isDarkColor(vars.bg) ? .14 : .06)};
+    --quote-line:${rgbaOf(vars.text, .35)};
+  }`;
+  document.getElementById('themeVars').textContent = css;
+}
+
+function presetToVars(p){
+  return {
+    bg:p.bg, grouped:p.grouped, card:p.card, soft:p.soft, input:p.input,
+    text:p.text, textSub:p.textSub, textTer:p.textTer, textPh:p.textPh,
+    accent:p.accent,
+    bubbleMe:p.bubbleMe, bubbleMeText:p.bubbleMeText,
+    bubbleTa:p.bubbleTa, bubbleTaText:p.bubbleTaText,
+    border:p.border, borderStrong:p.borderStrong,
+    overlay:p.overlay, blur:p.blur
+  };
+}
+
+function customToVars(ct){
+  const dark = isDarkColor(ct.bg);
+  const cardIsDark = isDarkColor(ct.card);
+  return {
+    bg: ct.bg,
+    grouped: dark ? 'rgba(255,255,255,.04)' : 'rgba(0,0,0,.03)',
+    card: ct.card,
+    soft: cardIsDark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.04)',
+    input: cardIsDark ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.05)',
+    text: ct.text,
+    textSub: rgbaOf(ct.text, dark ? .6 : .55),
+    textTer: rgbaOf(ct.text, .35),
+    textPh: rgbaOf(ct.text, dark ? .4 : .45),
+    accent: ct.accent,
+    bubbleMe: ct.bubbleMe || ct.accent,
+    bubbleMeText: isDarkColor(ct.bubbleMe || ct.accent) ? '#ffffff' : '#000000',
+    bubbleTa: ct.bubbleTa || (dark ? 'rgba(255,255,255,.14)' : 'rgba(0,0,0,.05)'),
+    bubbleTaText: ct.text,
+    border: dark ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.07)',
+    borderStrong: dark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.15)',
+    overlay: dark ? 'rgba(0,0,0,.5)' : 'rgba(0,0,0,.3)',
+    blur: rgbaOf(ct.bg, .85)
+  };
+}
+
+function applyTheme(id){
+  const key = (id==='custom') ? 'custom' : (PRESET_THEMES[id] ? id : 'white');
+  localStorage.setItem(THEME_KEY, key);
+  if(key==='custom'){
+    paintTheme(customToVars(customTheme));
+  }else{
+    paintTheme(presetToVars(PRESET_THEMES[key]));
+  }
+  updateThemeUI();
+}
+
 function buildThemeGrid(){
-  const g=$('themeGrid');g.innerHTML='';
-  THEMES.forEach(t=>{
-    const el=document.createElement('div');el.className='theme-opt';el.dataset.id=t.id;
-    el.innerHTML='<div class="theme-pv" style="background:'+t.bg+';"><div class="theme-pv-card" style="background:'+t.card+';"></div><div class="theme-pv-dot" style="background:'+t.accent+';"></div></div><div class="theme-name">'+t.name+'</div>';
-    el.addEventListener('click',()=>{applyTheme(t.id);updateThemeUI();});
+  const g = $('themeGrid');
+  g.innerHTML = '';
+  Object.keys(PRESET_THEMES).forEach(id=>{
+    const t = PRESET_THEMES[id];
+    const el = document.createElement('div');
+    el.className = 'theme-opt';
+    el.dataset.id = id;
+    el.innerHTML =
+      '<div class="theme-pv" style="background:'+t.bg+';">'+
+        '<div class="theme-pv-card" style="background:'+t.card+';"></div>'+
+        '<div class="theme-pv-dot" style="background:'+t.accent+';"></div>'+
+      '</div>'+
+      '<div class="theme-name">'+t.name+'</div>';
+    el.addEventListener('click',()=>applyTheme(id));
     g.appendChild(el);
   });
-  const c=document.createElement('div');c.className='theme-opt';c.dataset.id='custom';
-  c.innerHTML='<div class="theme-pv" style="background:linear-gradient(135deg,#ff9a9e,#fad0c4 40%,#a1c4fd 80%);"><div class="theme-pv-card" style="background:rgba(255,255,255,.75);"></div><div class="theme-pv-dot" style="background:#007aff;"></div></div><div class="theme-name">自定义</div>';
-  c.addEventListener('click',()=>{applyTheme('custom');updateThemeUI();});
+
+  const c = document.createElement('div');
+  c.className = 'theme-opt';
+  c.dataset.id = 'custom';
+  c.innerHTML =
+    '<div class="theme-pv" style="background:linear-gradient(135deg,#ff9a9e,#fad0c4 40%,#a1c4fd 80%);">'+
+      '<div class="theme-pv-card" style="background:rgba(255,255,255,.75);"></div>'+
+      '<div class="theme-pv-dot" style="background:#007aff;"></div>'+
+    '</div>'+
+    '<div class="theme-name">自定义</div>';
+  c.addEventListener('click',()=>applyTheme('custom'));
   g.appendChild(c);
   updateThemeUI();
 }
+
 function updateThemeUI(){
-  const cur=localStorage.getItem(THEME_KEY)||'white';
+  const cur = localStorage.getItem(THEME_KEY) || 'white';
   $('themeGrid').querySelectorAll('.theme-opt').forEach(el=>{
-    const on=el.dataset.id===cur;
-    el.classList.toggle('active',on);
-    const old=el.querySelector('.theme-check');if(old)old.remove();
-    if(on){const ch=document.createElement('div');ch.className='theme-check';ch.textContent='✓';el.appendChild(ch);}
+    const on = el.dataset.id === cur;
+    el.classList.toggle('active', on);
+    const old = el.querySelector('.theme-check');
+    if(old) old.remove();
+    if(on){
+      const ch = document.createElement('div');
+      ch.className = 'theme-check';
+      ch.textContent = '✓';
+      el.appendChild(ch);
+    }
   });
-  $('customPanel').classList.toggle('open',cur==='custom');
-  $('cBg').value=customTheme.bg;
-  $('cCard').value=customTheme.card;
-  $('cAccent').value=customTheme.accent;
-  $('cText').value=customTheme.text;
-  $('cBubbleMe').value=customTheme.bubbleMe||customTheme.accent;
-  $('cBubbleTa').value=customTheme.bubbleTa||(isDark(customTheme.bg)?'#3a3a3c':'#f2f2f7');
-}
-function saveCustom(){
-  customTheme={
-    bg:$('cBg').value,card:$('cCard').value,accent:$('cAccent').value,text:$('cText').value,
-    bubbleMe:$('cBubbleMe').value,bubbleTa:$('cBubbleTa').value
-  };
-  localStorage.setItem(CUSTOM_THEME_KEY,JSON.stringify(customTheme));
-  if(localStorage.getItem(THEME_KEY)==='custom')applyCustomTheme();
+  $('customPanel').classList.toggle('open', cur === 'custom');
+  $('cBg').value = customTheme.bg;
+  $('cCard').value = customTheme.card;
+  $('cAccent').value = customTheme.accent;
+  $('cText').value = customTheme.text;
+  $('cBubbleMe').value = customTheme.bubbleMe || customTheme.accent;
+  $('cBubbleTa').value = customTheme.bubbleTa || (isDarkColor(customTheme.bg) ? '#3a3a3c' : '#f2f2f7');
 }
 
+function bindCustomInputs(){
+  const map = {
+    cBg:'bg', cCard:'card', cAccent:'accent', cText:'text',
+    cBubbleMe:'bubbleMe', cBubbleTa:'bubbleTa'
+  };
+  Object.keys(map).forEach(id=>{
+    $(id).addEventListener('input', ()=>{
+      customTheme[map[id]] = $(id).value;
+      localStorage.setItem(CUSTOM_THEME_KEY, JSON.stringify(customTheme));
+      if(localStorage.getItem(THEME_KEY) !== 'custom'){
+        localStorage.setItem(THEME_KEY, 'custom');
+      }
+      paintTheme(customToVars(customTheme));
+      updateThemeUI();
+    });
+  });
+}
+
+/* ============================================================
+   工具函数
+   ============================================================ */
 function pad(n){return n.toString().padStart(2,'0');}
 function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 function fmtHm(ts){const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());}
@@ -874,6 +1048,9 @@ function userByKey(k){return state&&state.users?state.users[k]:null;}
 function genId(p){return (p||'id')+Date.now()+Math.random().toString(36).slice(2,7);}
 function avSvg(){return '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.2a7.5 7.5 0 0 1 15 0"/></svg>';}
 
+/* ============================================================
+   云端读写
+   ============================================================ */
 async function cloudGet(code){
   const res=await fetch(SUPABASE_URL+'/rest/v1/rooms?code=eq.'+encodeURIComponent(code)+'&select=data',{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
   if(!res.ok)throw new Error('HTTP '+res.status);
@@ -1035,7 +1212,9 @@ function findLatestCommentBy(arr,author){
 function findComment(arr,id){for(const c of arr){if(c.id===id)return c;const r=findComment(c.replies||[],id);if(r)return r;}return null;}
 function rmComment(arr,id){for(let i=0;i<arr.length;i++){if(arr[i].id===id){arr.splice(i,1);return true;}if(arr[i].replies&&rmComment(arr[i].replies,id))return true;}return false;}
 
-/* ===== 入口页 ===== */
+/* ============================================================
+   入口页
+   ============================================================ */
 function showEntry(){
   $('screen').style.display='none';
   $('tabbar').style.display='none';
@@ -1364,7 +1543,9 @@ function renderCard(p){
   '</div>';
 }
 
-/* ===== 通知中心 ===== */
+/* ============================================================
+   通知中心
+   ============================================================ */
 function renderNotify(){
   if(!state)return;
   renderHeroPair($('notifyPair'));
@@ -1405,7 +1586,9 @@ function renderNotify(){
   });
 }
 
-/* ===== 个人主页 ===== */
+/* ============================================================
+   个人主页
+   ============================================================ */
 function renderProfile(user,isMe){
   const mine=state.posts.filter(p=>p.author===(isMe?currentUser:partnerKey()));
   const totalComments=mine.reduce((s,p)=>s+countAllComments(p.comments||[]),0);
@@ -1639,7 +1822,9 @@ function openActionSheet(items){
   $('sheet').classList.add('open');
 }
 
-/* ===== 日历 ===== */
+/* ============================================================
+   日历
+   ============================================================ */
 function renderOther(){
   renderHeroPair($('otherPair'));
   if(currentSubTab==='calendar'){renderCalendar();$('viewCal').style.display='block';$('viewAnniv').style.display='none';}
@@ -1795,7 +1980,9 @@ $('todoAdd').addEventListener('click',()=>{
 $('todoInput').addEventListener('keypress',e=>{if(e.key==='Enter')$('todoAdd').click();});
 $('todoModal').addEventListener('click',e=>{if(e.target===$('todoModal'))$('todoModal').classList.remove('open');});
 
-/* ===== 纪念日 ===== */
+/* ============================================================
+   纪念日
+   ============================================================ */
 function renderAnniv(){
   const c=$('viewAnniv');
   const a=state.anniversary;
@@ -1905,7 +2092,10 @@ function editAnnivBg(){
       inp.addEventListener('change',e=>{
         const f=e.target.files[0];if(!f)return;
         const r=new FileReader();
-        r.onload=ev=>openCrop(ev.target.result,url=>{img=url;prev.innerHTML='<img src="'+url+'" style="width:100%;display:block;max-height:200px;object-fit:cover;">';});
+        r.onload=ev=>openCrop(ev.target.result,url=>{
+          img=url;
+          prev.innerHTML='<img src="'+url+'" style="width:100%;display:block;max-height:200px;object-fit:cover;">';
+        },'square');
         r.readAsDataURL(f);
       });
       inp.click();
@@ -1946,7 +2136,9 @@ function editCustomAnniv(id){
   $('modal').classList.add('open');
 }
 
-/* ===== 设置 ===== */
+/* ============================================================
+   设置
+   ============================================================ */
 function renderSettings(){
   if(!state)return;
   const c=$('settingsBox');
@@ -2014,7 +2206,7 @@ function pickImage(type){
       saveRoom();
       if(currentTab==='me')renderMe();
       if(currentTab==='feed')renderFeed();
-    });
+    }, type==='avatar'?'round':'square');
     r.readAsDataURL(f);
   });
   inp.click();
@@ -2050,7 +2242,9 @@ function editBio(){
   $('modal').classList.add('open');setTimeout(()=>inp.focus(),100);
 }
 
-/* ===== 编辑器 ===== */
+/* ============================================================
+   编辑器
+   ============================================================ */
 function openEditor(post){
   editingPostId=post?post.id:null;
   editorImage=post?post.image:null;
@@ -2074,7 +2268,11 @@ $('toolImg').addEventListener('click',()=>$('editorImg').click());
 $('editorImg').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>openCrop(ev.target.result,url=>{editorImage=url;renderEditorPreview();updatePubBtn();});
+  r.onload=ev=>openCrop(ev.target.result,url=>{
+    editorImage=url;
+    renderEditorPreview();
+    updatePubBtn();
+  },'square');
   r.readAsDataURL(f);e.target.value='';
 });
 $('toolTime').addEventListener('click',()=>{
@@ -2105,153 +2303,222 @@ $('editorPub').addEventListener('click',()=>{
   if(currentTab==='feed')renderFeed();else if(currentTab==='me')renderMe();
 });
 
-/* ===== 裁剪（增强：边中点 + 比例 + 双指缩放） ===== */
-let cropState={imgW:0,imgH:0,dW:0,dH:0,x:0,y:0,w:0,h:0};
-let cropCb=null,dragStart=null,pinchStart=null;
-let cropRatio=null;
-const RATIOS=[null,1,16/9,9/16];
-const RATIO_LABELS=['自由','1:1','16:9','9:16'];
-let ratioIdx=0;
+/* ============================================================
+   裁剪器 v2（微信/小红书风格）
+   ============================================================ */
+const cropCtl = {
+  img: null,
+  naturalW: 0,
+  naturalH: 0,
+  baseW: 0,
+  baseH: 0,
+  x: 0,
+  y: 0,
+  scale: 1,
+  minScale: 1,
+  maxScale: 3,
+  vpSize: 0,
+  shape: 'round',
+  cb: null,
+  dragging: false,
+  dragStartX: 0,
+  dragStartY: 0,
+  dragOriginX: 0,
+  dragOriginY: 0,
+  pinching: false,
+  pinchStartDist: 0,
+  pinchStartScale: 1,
+  pinchStartX: 0,
+  pinchStartY: 0,
+  pinchMidX: 0,
+  pinchMidY: 0
+};
 
-function openCrop(src,cb){
-  cropCb=cb;
-  ratioIdx=0;cropRatio=null;$('cropRatio').textContent=RATIO_LABELS[0];
-  $('cropImg').onload=function(){
-    requestAnimationFrame(()=>{
-      const area=$('cropWrap').parentElement;
-      const maxW=area.clientWidth-20,maxH=area.clientHeight-20;
-      const r=$('cropImg').naturalWidth/$('cropImg').naturalHeight;
-      let dw=maxW,dh=maxW/r;
-      if(dh>maxH){dh=maxH;dw=maxH*r;}
-      $('cropWrap').style.width=dw+'px';$('cropWrap').style.height=dh+'px';
-      $('cropImg').style.width=dw+'px';$('cropImg').style.height=dh+'px';
-      cropState.dW=dw;cropState.dH=dh;
-      cropState.imgW=$('cropImg').naturalWidth;cropState.imgH=$('cropImg').naturalHeight;
-      cropState.w=dw*0.6;cropState.h=dh*0.6;
-      cropState.x=(dw-cropState.w)/2;cropState.y=(dh-cropState.h)/2;
-      updateCropUI();$('crop').classList.add('open');
-    });
-  };
-  $('cropImg').src=src;
-}
-function updateCropUI(){
-  const s=$('cropSel');
-  s.style.left=cropState.x+'px';s.style.top=cropState.y+'px';
-  s.style.width=cropState.w+'px';s.style.height=cropState.h+'px';
-}
-$('cropRatio').addEventListener('click',()=>{
-  ratioIdx=(ratioIdx+1)%RATIOS.length;
-  cropRatio=RATIOS[ratioIdx];
-  $('cropRatio').textContent=RATIO_LABELS[ratioIdx];
-  if(cropRatio){
-    const cx=cropState.x+cropState.w/2, cy=cropState.y+cropState.h/2;
-    let w=cropState.w, h=w/cropRatio;
-    if(h>cropState.dH){h=cropState.dH;w=h*cropRatio;}
-    if(w>cropState.dW){w=cropState.dW;h=w/cropRatio;}
-    cropState.w=w;cropState.h=h;
-    cropState.x=Math.max(0,Math.min(cropState.dW-w,cx-w/2));
-    cropState.y=Math.max(0,Math.min(cropState.dH-h,cy-h/2));
-    updateCropUI();
-  }
-});
-$('cropSel').addEventListener('pointerdown',e=>{
-  if(e.target.classList.contains('crop-h'))return;
-  dragStart={type:'move',sx:e.clientX,sy:e.clientY,x:cropState.x,y:cropState.y};
-  e.target.setPointerCapture(e.pointerId);e.preventDefault();
-});
-$('cropSel').querySelectorAll('.crop-h').forEach(h=>{
-  h.addEventListener('pointerdown',e=>{
-    dragStart={type:h.dataset.dir,sx:e.clientX,sy:e.clientY,x:cropState.x,y:cropState.y,w:cropState.w,h:cropState.h};
-    e.target.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();
-  });
-});
-$('cropSel').addEventListener('pointermove',e=>{
-  if(!dragStart)return;
-  const dx=e.clientX-dragStart.sx,dy=e.clientY-dragStart.sy,min=40;
-  if(dragStart.type==='move'){
-    let nx=dragStart.x+dx,ny=dragStart.y+dy;
-    nx=Math.max(0,Math.min(cropState.dW-cropState.w,nx));
-    ny=Math.max(0,Math.min(cropState.dH-cropState.h,ny));
-    cropState.x=nx;cropState.y=ny;
-  }else{
-    let nx=dragStart.x,ny=dragStart.y,nw=dragStart.w,nh=dragStart.h;
-    const t=dragStart.type;
-    if(t==='tl'){nx+=dx;ny+=dy;nw-=dx;nh-=dy;}
-    if(t==='tr'){ny+=dy;nw+=dx;nh-=dy;}
-    if(t==='bl'){nx+=dx;nw-=dx;nh+=dy;}
-    if(t==='br'){nw+=dx;nh+=dy;}
-    if(t==='t'){ny+=dy;nh-=dy;}
-    if(t==='b'){nh+=dy;}
-    if(t==='l'){nx+=dx;nw-=dx;}
-    if(t==='r'){nw+=dx;}
-    if(cropRatio){
-      if(t==='l'||t==='r'){nh=nw/cropRatio;if(t==='t'||t==='tl'||t==='tr'){}}
-      else if(t==='t'||t==='b'){nw=nh*cropRatio;}
-      else{nh=nw/cropRatio;}
-    }
-    if(nw<min){nw=min;if(t.includes('l'))nx=dragStart.x+dragStart.w-min;if(cropRatio)nh=nw/cropRatio;}
-    if(nh<min){nh=min;if(t.includes('t'))ny=dragStart.y+dragStart.h-min;if(cropRatio)nw=nh*cropRatio;}
-    if(nx<0){nw+=nx;nx=0;}
-    if(ny<0){nh+=ny;ny=0;}
-    if(nx+nw>cropState.dW)nw=cropState.dW-nx;
-    if(ny+nh>cropState.dH)nh=cropState.dH-ny;
-    cropState.x=nx;cropState.y=ny;cropState.w=nw;cropState.h=nh;
-  }
-  updateCropUI();
-});
-$('cropSel').addEventListener('pointerup',()=>{dragStart=null;});
-$('cropSel').addEventListener('pointercancel',()=>{dragStart=null;});
-$('cropWrap').addEventListener('touchstart',e=>{
-  if(e.touches.length===2){
-    const [a,b]=e.touches;
-    pinchStart={
-      dist:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),
-      w:cropState.w,h:cropState.h,x:cropState.x,y:cropState.y
+function openCrop(src, cb, shape){
+  cropCtl.cb = cb;
+  cropCtl.shape = shape === 'square' ? 'square' : 'round';
+
+  const vp = $('cropViewport');
+  const img = $('cropImg');
+  vp.classList.remove('round','square');
+  vp.classList.add(cropCtl.shape);
+  $('cropTitle').textContent = cropCtl.shape === 'round' ? '裁剪头像' : '裁剪封面';
+  $('cropZoom').value = 1;
+
+  requestAnimationFrame(()=>{
+    cropCtl.vpSize = vp.clientWidth;
+    img.onload = ()=>{
+      cropCtl.naturalW = img.naturalWidth;
+      cropCtl.naturalH = img.naturalHeight;
+      const ratio = cropCtl.naturalW / cropCtl.naturalH;
+      if(ratio >= 1){
+        cropCtl.baseH = cropCtl.vpSize;
+        cropCtl.baseW = cropCtl.vpSize * ratio;
+      }else{
+        cropCtl.baseW = cropCtl.vpSize;
+        cropCtl.baseH = cropCtl.vpSize / ratio;
+      }
+      cropCtl.minScale = 1;
+      cropCtl.maxScale = 3;
+      cropCtl.scale = 1;
+      cropCtl.x = 0;
+      cropCtl.y = 0;
+      img.style.width = cropCtl.baseW + 'px';
+      img.style.height = cropCtl.baseH + 'px';
+      renderCrop();
+      $('crop').classList.add('open');
     };
-  }
-},{passive:true});
-$('cropWrap').addEventListener('touchmove',e=>{
-  if(e.touches.length===2&&pinchStart){
+    img.src = src;
+  });
+}
+
+function renderCrop(){
+  const img = $('cropImg');
+  const s = cropCtl.scale;
+  const tx = cropCtl.x;
+  const ty = cropCtl.y;
+  img.style.transform = `translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${s})`;
+  clampCrop();
+}
+function clampCrop(){
+  const halfW = (cropCtl.baseW * cropCtl.scale) / 2;
+  const halfH = (cropCtl.baseH * cropCtl.scale) / 2;
+  const vp = cropCtl.vpSize / 2;
+  const maxX = Math.max(0, halfW - vp);
+  const maxY = Math.max(0, halfH - vp);
+  if(cropCtl.x >  maxX) cropCtl.x =  maxX;
+  if(cropCtl.x < -maxX) cropCtl.x = -maxX;
+  if(cropCtl.y >  maxY) cropCtl.y =  maxY;
+  if(cropCtl.y < -maxY) cropCtl.y = -maxY;
+}
+
+$('cropStage').addEventListener('pointerdown', e=>{
+  if(e.pointerType === 'touch' && e.isPrimary === false) return;
+  cropCtl.dragging = true;
+  cropCtl.dragStartX = e.clientX;
+  cropCtl.dragStartY = e.clientY;
+  cropCtl.dragOriginX = cropCtl.x;
+  cropCtl.dragOriginY = cropCtl.y;
+  e.currentTarget.setPointerCapture(e.pointerId);
+});
+$('cropStage').addEventListener('pointermove', e=>{
+  if(!cropCtl.dragging) return;
+  cropCtl.x = cropCtl.dragOriginX + (e.clientX - cropCtl.dragStartX);
+  cropCtl.y = cropCtl.dragOriginY + (e.clientY - cropCtl.dragStartY);
+  renderCrop();
+});
+$('cropStage').addEventListener('pointerup', ()=>{ cropCtl.dragging = false; });
+$('cropStage').addEventListener('pointercancel', ()=>{ cropCtl.dragging = false; });
+
+$('cropStage').addEventListener('touchstart', e=>{
+  if(e.touches.length===2){
     e.preventDefault();
-    const [a,b]=e.touches;
-    const dist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
-    const scale=dist/pinchStart.dist;
-    let w=pinchStart.w*scale, h=pinchStart.h*scale;
-    w=Math.max(40,Math.min(cropState.dW,w));
-    h=Math.max(40,Math.min(cropState.dH,h));
-    if(cropRatio){h=w/cropRatio;if(h>cropState.dH){h=cropState.dH;w=h*cropRatio;}}
-    cropState.w=w;cropState.h=h;
-    cropState.x=Math.max(0,Math.min(cropState.dW-w,pinchStart.x+(pinchStart.w-w)/2));
-    cropState.y=Math.max(0,Math.min(cropState.dH-h,pinchStart.y+(pinchStart.h-h)/2));
-    updateCropUI();
+    cropCtl.dragging = false;
+    cropCtl.pinching = true;
+    const [a,b] = e.touches;
+    cropCtl.pinchStartDist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
+    cropCtl.pinchStartScale = cropCtl.scale;
+    cropCtl.pinchStartX = cropCtl.x;
+    cropCtl.pinchStartY = cropCtl.y;
+    cropCtl.pinchMidX = (a.clientX + b.clientX) / 2;
+    cropCtl.pinchMidY = (a.clientY + b.clientY) / 2;
   }
-},{passive:false});
-$('cropWrap').addEventListener('touchend',()=>{pinchStart=null;});
-$('cropCancel').addEventListener('click',()=>{$('crop').classList.remove('open');cropCb=null;});
-$('cropConfirm').addEventListener('click',()=>{
-  const sx=cropState.x*(cropState.imgW/cropState.dW);
-  const sy=cropState.y*(cropState.imgH/cropState.dH);
-  const sw=cropState.w*(cropState.imgW/cropState.dW);
-  const sh=cropState.h*(cropState.imgH/cropState.dH);
-  const cv=document.createElement('canvas');
-  cv.width=Math.round(sw);cv.height=Math.round(sh);
-  cv.getContext('2d').drawImage($('cropImg'),sx,sy,sw,sh,0,0,cv.width,cv.height);
-  const url=cv.toDataURL('image/jpeg',0.85);
-  $('crop').classList.remove('open');
-  if(cropCb)cropCb(url);cropCb=null;
+}, {passive:false});
+
+$('cropStage').addEventListener('touchmove', e=>{
+  if(!cropCtl.pinching || e.touches.length !== 2) return;
+  e.preventDefault();
+  const [a,b] = e.touches;
+  const dist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
+  let newScale = cropCtl.pinchStartScale * (dist / cropCtl.pinchStartDist);
+  newScale = Math.max(cropCtl.minScale, Math.min(cropCtl.maxScale, newScale));
+
+  const midX = (a.clientX + b.clientX) / 2;
+  const midY = (a.clientY + b.clientY) / 2;
+  const dx = midX - cropCtl.pinchMidX;
+  const dy = midY - cropCtl.pinchMidY;
+
+  const k = newScale / cropCtl.pinchStartScale;
+  cropCtl.scale = newScale;
+  cropCtl.x = (cropCtl.pinchStartX + dx) * k;
+  cropCtl.y = (cropCtl.pinchStartY + dy) * k;
+
+  $('cropZoom').value = newScale;
+  renderCrop();
+}, {passive:false});
+
+$('cropStage').addEventListener('touchend', e=>{
+  if(e.touches.length < 2) cropCtl.pinching = false;
+}, {passive:true});
+
+$('cropZoom').addEventListener('input', e=>{
+  const s = parseFloat(e.target.value);
+  const k = s / cropCtl.scale;
+  cropCtl.scale = s;
+  cropCtl.x *= k;
+  cropCtl.y *= k;
+  renderCrop();
 });
 
+$('cropReset').addEventListener('click', ()=>{
+  cropCtl.scale = 1;
+  cropCtl.x = 0;
+  cropCtl.y = 0;
+  $('cropZoom').value = 1;
+  renderCrop();
+});
+
+$('cropCancel').addEventListener('click', ()=>{
+  $('crop').classList.remove('open');
+  cropCtl.cb = null;
+});
+
+$('cropConfirm').addEventListener('click', ()=>{
+  const img = $('cropImg');
+  const vp = cropCtl.vpSize;
+  const outSize = cropCtl.shape === 'round' ? 512 : 1024;
+
+  const displayedW = cropCtl.baseW * cropCtl.scale;
+  const displayedH = cropCtl.baseH * cropCtl.scale;
+  const imgLeftInVp = cropCtl.x - displayedW / 2 + vp / 2;
+  const imgTopInVp  = cropCtl.y - displayedH / 2 + vp / 2;
+
+  const ratio = cropCtl.naturalW / displayedW;
+  const sx = imgLeftInVp * ratio;
+  const sy = imgTopInVp  * ratio;
+  const sSize = vp * ratio;
+
+  const cv = document.createElement('canvas');
+  cv.width = outSize;
+  cv.height = outSize;
+  const ctx = cv.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  if(cropCtl.shape === 'round'){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(outSize/2, outSize/2, outSize/2, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+  }
+  ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, outSize, outSize);
+  if(cropCtl.shape === 'round') ctx.restore();
+
+  const url = cv.toDataURL('image/jpeg', 0.9);
+  $('crop').classList.remove('open');
+  if(cropCtl.cb) cropCtl.cb(url);
+  cropCtl.cb = null;
+});
+
+/* ============================================================
+   全局事件
+   ============================================================ */
 document.getElementById('tabbar').addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;switchTab(b.dataset.tab);});
 $('fab').addEventListener('click',()=>openEditor(null));
 $('themeOverlay').addEventListener('click',()=>$('themePicker').classList.remove('open'));
 $('sheet').addEventListener('click',e=>{if(e.target===$('sheet'))$('sheet').classList.remove('open');});
 $('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('open');});
-['cBg','cCard','cAccent','cText','cBubbleMe','cBubbleTa'].forEach(id=>{
-  $(id).addEventListener('input',()=>{
-    if(localStorage.getItem(THEME_KEY)!=='custom')applyTheme('custom');
-    saveCustom();updateThemeUI();
-  });
-});
 
 function tickClock(){
   const d=new Date();
@@ -2263,6 +2530,7 @@ function tickClock(){
 function boot(){
   tickClock();setInterval(tickClock,1000);
   buildThemeGrid();
+  bindCustomInputs();
   applyTheme(localStorage.getItem(THEME_KEY)||'white');
   setTimeout(()=>{hideLoad();showEntry();},100);
 }
