@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>喵喵说</title>
+<title>喵喵说 · icity</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -349,10 +349,12 @@ body{
 .editor-body{flex:1;min-height:0;padding:var(--space-8) var(--space-7);overflow-y:auto;}
 .editor-ta{width:100%;border:none;background:transparent;resize:none;font-size:17px;line-height:1.55;color:var(--text-primary);outline:none;font-family:inherit;min-height:160px;letter-spacing:-.2px;}
 .editor-ta::placeholder{color:var(--text-placeholder);}
-.editor-pv{margin-top:var(--space-6);border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-normal);}
+.editor-pvs{margin-top:var(--space-6);display:flex;flex-direction:column;gap:var(--space-5);}
+.editor-pv{border-radius:var(--radius-lg);overflow:hidden;position:relative;box-shadow:var(--shadow-normal);}
 .editor-pv img{width:100%;display:block;max-height:400px;object-fit:cover;}
 .editor-pv .rm{position:absolute;top:var(--space-5);right:var(--space-5);background:rgba(0,0,0,.55);border:none;border-radius:50%;width:32px;height:32px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .editor-pv .rm svg{width:16px;height:16px;stroke-width:2.2;fill:none;stroke:currentColor;stroke-linecap:round;}
+.editor-pv .cover-tag{position:absolute;top:var(--space-5);left:var(--space-5);background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.3px;}
 .editor-tools{padding:var(--space-5) var(--space-6) calc(var(--space-5) + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;gap:var(--space-5);}
 .tool{display:flex;align-items:center;gap:var(--space-3);background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-5) var(--space-6);font-size:13px;font-weight:600;color:var(--text-primary);cursor:pointer;font-family:inherit;}
 .tool svg{width:18px;height:18px;stroke-width:1.8;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
@@ -676,7 +678,7 @@ body{
     <div class="editor-nav"><button id="editorCancel">取消</button><button class="pub" id="editorPub" disabled>发布</button></div>
     <div class="editor-body"><textarea class="editor-ta" id="editorText" placeholder="分享点什么…"></textarea><div id="editorPvWrap"></div></div>
     <div class="editor-tools"><button class="tool" id="toolImg"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>图片</button><button class="tool" id="toolTime"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>定时</button></div>
-    <input type="file" id="editorImg" class="hidden-input" accept="image/*">
+    <input type="file" id="editorImg" class="hidden-input" accept="image/*" multiple>
   </div>
 
   <div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
@@ -753,7 +755,7 @@ let pollTimer=null;
 
 let calAnchor=new Date();
 let editingPostId=null;
-let editorImage=null;
+let editorImages=[];       // 动态图改为多图数组（最多9张）
 let editorScheduleAt=null;
 let detailPostId=null;
 let replyingTo=null;
@@ -1183,6 +1185,30 @@ function findComment(arr,id){for(const c of arr){if(c.id===id)return c;const r=f
 function rmComment(arr,id){for(let i=0;i<arr.length;i++){if(arr[i].id===id){arr.splice(i,1);return true;}if(arr[i].replies&&rmComment(arr[i].replies,id))return true;}return false;}
 
 /* ============================================================
+   图片工具：压缩 + 原图直传（修复黑图）
+   ============================================================ */
+function compressImage(file, maxSide, quality, cb){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.naturalWidth, h=img.naturalHeight;
+      const scale=Math.min(1, maxSide/Math.max(w,h));
+      w=Math.round(w*scale); h=Math.round(h*scale);
+      const cv=document.createElement('canvas');
+      cv.width=w; cv.height=h;
+      const ctx=cv.getContext('2d');
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      cb(cv.toDataURL('image/jpeg', quality));
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ============================================================
    入口页
    ============================================================ */
 function showEntry(){
@@ -1470,7 +1496,6 @@ function bindFeedEvents(c){
           openActionSheet([
             {text:'确认删除这条动态？',danger:true,fn:()=>{
               state.posts=state.posts.filter(x=>x.id!==pid);
-              // 一并清理与该帖相关的通知
               state.notifications=(state.notifications||[]).filter(n=>n.postId!==pid);
               saveRoom();rerenderCurrent();
             }},
@@ -1500,14 +1525,16 @@ function renderCard(p){
     else if(p.readBy&&p.readBy[pk])readTag='<span class="post-read read">已读</span>';
     else readTag='<span class="post-read">未读</span>';
   }
-  // 帖子右上角未读角标：只显示「别人（Ta）针对这条帖子给我」的未读通知数
   const badgeN=notifyCountForPost(p.id);
   const badgeHtml = badgeN>0
     ? '<span class="post-badge">'+(badgeN>9?'9+':badgeN)+'</span>'
     : '';
+  // 多图：只显示第一张（封面）
+  const imgHtml = (p.images && p.images.length) ? '<div class="post-media"><img src="'+p.images[0]+'"></div>'
+                 : (p.image ? '<div class="post-media"><img src="'+p.image+'"></div>' : '');
   return '<div class="post'+(p.hidden?' hidden-post':'')+'" data-post-id="'+p.id+'">'+
     badgeHtml+
-    (p.image?'<div class="post-media"><img src="'+p.image+'"></div>':'')+
+    imgHtml+
     '<div class="post-body"><div class="post-head"><div class="post-av" data-uid="'+p.author+'">'+av+'</div><div class="post-meta"><div class="post-name" data-uid="'+p.author+'">'+esc(name)+'</div><div class="post-time '+(t.scheduled?'scheduled':'')+'">'+esc(t.text)+'</div></div></div>'+
     (p.text?'<div class="post-text">'+esc(p.text)+'</div>':'')+
     '</div>'+
@@ -1608,7 +1635,6 @@ function openDetail(postId){
   if(p.hidden&&p.author!==currentUser)return;
   detailPostId=postId;
   replyingTo=null;
-  // 打开详情即标记该帖所有通知为已读
   markPostNotificationsRead(postId);
   renderDetail(postId);
   $('detail').classList.add('open');
@@ -1629,7 +1655,9 @@ function renderDetail(postId){
   const name=u?u.name:'Ta';
   const av=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
   const t=fmtPostTime(p);
-  $('detailHero').innerHTML=p.image?'<div class="detail-hero"><img src="'+p.image+'"></div>':'';
+  // 多图轮播简化：显示第一张
+  const heroImg = (p.images && p.images.length) ? p.images[0] : p.image;
+  $('detailHero').innerHTML=heroImg?'<div class="detail-hero"><img src="'+heroImg+'"></div>':'';
   $('detailAv').innerHTML=av;
   $('detailName').textContent=name;
   $('detailTime').textContent=t.text;
@@ -1683,7 +1711,6 @@ function bindDetailEvents(){
           const p=state.posts.find(x=>x.id===b.dataset.postId);
           if(!p)return;
           rmComment(p.comments,b.dataset.commentId);
-          // 一并清理该评论产生的通知
           state.notifications=(state.notifications||[]).filter(n=>n.commentId!==b.dataset.commentId);
           saveRoom();renderDetail(detailPostId);
         }},
@@ -1737,7 +1764,6 @@ $('detailSend').addEventListener('click',()=>{
     nc.replyTo=replyingTo.commentId;
   }
   p.comments.push(nc);
-  // 关键：写入评论后立刻判定通知（自己发的评论才生成，避免双端重复）
   notifyOnNewComment(p,nc);
   replyingTo=null;
   $('detailInput').value='';$('detailSend').disabled=true;
@@ -2033,12 +2059,12 @@ function editAnnivBg(){
       const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
       inp.addEventListener('change',e=>{
         const f=e.target.files[0];if(!f)return;
-        const r=new FileReader();
-        r.onload=ev=>openCrop(ev.target.result,url=>{
-          img=url;
-          prev.innerHTML='<img src="'+url+'" style="width:100%;display:block;max-height:200px;object-fit:cover;">';
-        },'square');
-        r.readAsDataURL(f);
+        const reader=new FileReader();
+        reader.onload=ev=>{
+          img=ev.target.result;
+          prev.innerHTML='<img src="'+img+'" style="width:100%;display:block;max-height:200px;object-fit:cover;">';
+        };
+        reader.readAsDataURL(f);
       });
       inp.click();
     });
@@ -2137,86 +2163,84 @@ function renderSettings(){
   });
 }
 
+/* ============================================================
+   图片选择：头像/封面直传原图；动态图压缩；纪念日背景直传原图
+   ============================================================ */
 function pickImage(type){
-  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
   inp.addEventListener('change',e=>{
-    const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>openCrop(ev.target.result,url=>{
-      const u=meUser();if(!u)return;
-      if(type==='avatar')u.avatar=url;else u.cover=url;
+    const f=e.target.files[0];
+    if(!f)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const u=meUser();
+      if(!u)return;
+      if(type==='avatar')u.avatar=ev.target.result;
+      else u.cover=ev.target.result;
       saveRoom();
       if(currentTab==='me')renderMe();
       if(currentTab==='feed')renderFeed();
-    }, type==='avatar'?'round':'square');
-    r.readAsDataURL(f);
+    };
+    reader.readAsDataURL(f);
   });
   inp.click();
 }
-function editName(){
-  const u=meUser();if(!u)return;
-  const box=$('modalBox');box.innerHTML='';
-  const t=document.createElement('div');t.className='modal-title';t.textContent='修改昵称';box.appendChild(t);
-  const inp=document.createElement('input');inp.className='modal-input';inp.value=u.name||'';inp.maxLength=16;box.appendChild(inp);
-  const ac=document.createElement('div');ac.className='modal-actions';
-  const c=document.createElement('button');c.className='modal-btn cancel';c.textContent='取消';c.addEventListener('click',()=>$('modal').classList.remove('open'));
-  const ok=document.createElement('button');ok.className='modal-btn confirm';ok.textContent='保存';
-  ok.addEventListener('click',()=>{
-    const n=inp.value.trim();
-    if(!n){alert('昵称不能为空');return;}
-    const other=partnerUser();
-    if(other&&other.name===n){alert('这个名字已被对方使用');return;}
-    u.name=n;saveRoom();$('modal').classList.remove('open');renderMe();renderFeed();
-  });
-  ac.appendChild(c);ac.appendChild(ok);box.appendChild(ac);
-  $('modal').classList.add('open');setTimeout(()=>inp.focus(),100);
-}
-function editBio(){
-  const u=meUser();if(!u)return;
-  const box=$('modalBox');box.innerHTML='';
-  const t=document.createElement('div');t.className='modal-title';t.textContent='修改个性签名';box.appendChild(t);
-  const inp=document.createElement('input');inp.className='modal-input';inp.value=u.bio||'';inp.maxLength=40;box.appendChild(inp);
-  const ac=document.createElement('div');ac.className='modal-actions';
-  const c=document.createElement('button');c.className='modal-btn cancel';c.textContent='取消';c.addEventListener('click',()=>$('modal').classList.remove('open'));
-  const ok=document.createElement('button');ok.className='modal-btn confirm';ok.textContent='保存';
-  ok.addEventListener('click',()=>{u.bio=inp.value.trim();saveRoom();$('modal').classList.remove('open');renderMe();});
-  ac.appendChild(c);ac.appendChild(ok);box.appendChild(ac);
-  $('modal').classList.add('open');setTimeout(()=>inp.focus(),100);
-}
 
 /* ============================================================
-   编辑器
+   编辑器（动态图：多选压缩，不裁剪）
    ============================================================ */
 function openEditor(post){
   editingPostId=post?post.id:null;
-  editorImage=post?post.image:null;
+  // 兼容旧数据：如果有 image 字段，放进 images 数组
+  editorImages = post ? (post.images ? post.images.slice() : (post.image ? [post.image] : [])) : [];
   editorScheduleAt=post?post.publishAt:null;
   $('editorText').value=post?post.text||'':'';
   renderEditorPreview();updatePubBtn();
   $('editor').classList.add('open');
   setTimeout(()=>$('editorText').focus(),100);
 }
-function closeEditor(){$('editor').classList.remove('open');editingPostId=null;editorImage=null;editorScheduleAt=null;$('editorText').value='';}
+function closeEditor(){$('editor').classList.remove('open');editingPostId=null;editorImages=[];editorScheduleAt=null;$('editorText').value='';}
+
 function renderEditorPreview(){
   const w=$('editorPvWrap');
-  if(!editorImage){w.innerHTML='';return;}
-  w.innerHTML='<div class="editor-pv"><img src="'+editorImage+'"><button class="rm" id="rmImg"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
-  $('rmImg').addEventListener('click',()=>{editorImage=null;renderEditorPreview();updatePubBtn();});
+  if(!editorImages.length){w.innerHTML='';return;}
+  w.innerHTML='<div class="editor-pvs">'+editorImages.map((src,i)=>
+    '<div class="editor-pv" data-i="'+i+'">'+(i===0?'<span class="cover-tag">封面</span>':'')+
+      '<img src="'+src+'">'+
+      '<button class="rm" data-i="'+i+'"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>'+
+    '</div>').join('')+'</div>';
+  w.querySelectorAll('.rm').forEach(b=>{
+    b.addEventListener('click',()=>{
+      editorImages.splice(parseInt(b.dataset.i),1);
+      renderEditorPreview();updatePubBtn();
+    });
+  });
 }
-function updatePubBtn(){$('editorPub').disabled=!($('editorText').value.trim()||editorImage);}
+function updatePubBtn(){$('editorPub').disabled=!($('editorText').value.trim()||editorImages.length);}
 $('editorText').addEventListener('input',updatePubBtn);
 $('editorCancel').addEventListener('click',closeEditor);
 $('toolImg').addEventListener('click',()=>$('editorImg').click());
+
 $('editorImg').addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>openCrop(ev.target.result,url=>{
-    editorImage=url;
-    renderEditorPreview();
-    updatePubBtn();
-  },'square');
-  r.readAsDataURL(f);e.target.value='';
+  const files=Array.from(e.target.files||[]);
+  if(!files.length)return;
+  const remain = 9 - editorImages.length;
+  const list = files.slice(0, remain);
+  if(files.length > remain) alert('最多 9 张图片，已截取前 '+remain+' 张');
+  let idx=0;
+  function next(){
+    if(idx>=list.length){e.target.value='';return;}
+    compressImage(list[idx++], 1280, 0.72, (url)=>{
+      editorImages.push(url);
+      renderEditorPreview();
+      updatePubBtn();
+      next();
+    });
+  }
+  next();
 });
+
 $('toolTime').addEventListener('click',()=>{
   const box=$('modalBox');box.innerHTML='';
   const t=document.createElement('div');t.className='modal-title';t.textContent='定时发布';box.appendChild(t);
@@ -2233,224 +2257,18 @@ $('toolTime').addEventListener('click',()=>{
 });
 $('editorPub').addEventListener('click',()=>{
   const text=$('editorText').value.trim();
-  if(!text&&!editorImage)return;
+  if(!text&&!editorImages.length)return;
   if(editingPostId){
     const p=state.posts.find(x=>x.id===editingPostId);if(!p)return;
-    p.text=text;p.image=editorImage;
+    p.text=text;
+    p.images=editorImages.slice();
+    delete p.image; // 清理旧字段
     if(editorScheduleAt)p.publishAt=editorScheduleAt;else delete p.publishAt;
   }else{
-    state.posts.push({id:genId('p'),author:currentUser,text:text,image:editorImage,createdAt:Date.now(),publishAt:editorScheduleAt||null,comments:[],readBy:{}});
+    state.posts.push({id:genId('p'),author:currentUser,text:text,images:editorImages.slice(),createdAt:Date.now(),publishAt:editorScheduleAt||null,comments:[],readBy:{}});
   }
   saveRoom();closeEditor();
   if(currentTab==='feed')renderFeed();else if(currentTab==='me')renderMe();
-});
-
-/* ============================================================
-   裁剪器 v2
-   ============================================================ */
-const cropCtl = {
-  img: null,
-  naturalW: 0,
-  naturalH: 0,
-  baseW: 0,
-  baseH: 0,
-  x: 0,
-  y: 0,
-  scale: 1,
-  minScale: 1,
-  maxScale: 3,
-  vpSize: 0,
-  shape: 'round',
-  cb: null,
-  dragging: false,
-  dragStartX: 0,
-  dragStartY: 0,
-  dragOriginX: 0,
-  dragOriginY: 0,
-  pinching: false,
-  pinchStartDist: 0,
-  pinchStartScale: 1,
-  pinchStartX: 0,
-  pinchStartY: 0,
-  pinchMidX: 0,
-  pinchMidY: 0
-};
-
-function openCrop(src, cb, shape){
-  cropCtl.cb = cb;
-  cropCtl.shape = shape === 'square' ? 'square' : 'round';
-
-  const vp = $('cropViewport');
-  const img = $('cropImg');
-  vp.classList.remove('round','square');
-  vp.classList.add(cropCtl.shape);
-  $('cropTitle').textContent = cropCtl.shape === 'round' ? '裁剪头像' : '裁剪封面';
-  $('cropZoom').value = 1;
-
-  requestAnimationFrame(()=>{
-    cropCtl.vpSize = vp.clientWidth;
-    img.onload = ()=>{
-      cropCtl.naturalW = img.naturalWidth;
-      cropCtl.naturalH = img.naturalHeight;
-      const ratio = cropCtl.naturalW / cropCtl.naturalH;
-      if(ratio >= 1){
-        cropCtl.baseH = cropCtl.vpSize;
-        cropCtl.baseW = cropCtl.vpSize * ratio;
-      }else{
-        cropCtl.baseW = cropCtl.vpSize;
-        cropCtl.baseH = cropCtl.vpSize / ratio;
-      }
-      cropCtl.minScale = 1;
-      cropCtl.maxScale = 3;
-      cropCtl.scale = 1;
-      cropCtl.x = 0;
-      cropCtl.y = 0;
-      img.style.width = cropCtl.baseW + 'px';
-      img.style.height = cropCtl.baseH + 'px';
-      renderCrop();
-      $('crop').classList.add('open');
-    };
-    img.src = src;
-  });
-}
-
-function renderCrop(){
-  const img = $('cropImg');
-  const s = cropCtl.scale;
-  const tx = cropCtl.x;
-  const ty = cropCtl.y;
-  img.style.transform = `translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${s})`;
-  clampCrop();
-}
-function clampCrop(){
-  const halfW = (cropCtl.baseW * cropCtl.scale) / 2;
-  const halfH = (cropCtl.baseH * cropCtl.scale) / 2;
-  const vp = cropCtl.vpSize / 2;
-  const maxX = Math.max(0, halfW - vp);
-  const maxY = Math.max(0, halfH - vp);
-  if(cropCtl.x >  maxX) cropCtl.x =  maxX;
-  if(cropCtl.x < -maxX) cropCtl.x = -maxX;
-  if(cropCtl.y >  maxY) cropCtl.y =  maxY;
-  if(cropCtl.y < -maxY) cropCtl.y = -maxY;
-}
-
-$('cropStage').addEventListener('pointerdown', e=>{
-  if(e.pointerType === 'touch' && e.isPrimary === false) return;
-  cropCtl.dragging = true;
-  cropCtl.dragStartX = e.clientX;
-  cropCtl.dragStartY = e.clientY;
-  cropCtl.dragOriginX = cropCtl.x;
-  cropCtl.dragOriginY = cropCtl.y;
-  e.currentTarget.setPointerCapture(e.pointerId);
-});
-$('cropStage').addEventListener('pointermove', e=>{
-  if(!cropCtl.dragging) return;
-  cropCtl.x = cropCtl.dragOriginX + (e.clientX - cropCtl.dragStartX);
-  cropCtl.y = cropCtl.dragOriginY + (e.clientY - cropCtl.dragStartY);
-  renderCrop();
-});
-$('cropStage').addEventListener('pointerup', ()=>{ cropCtl.dragging = false; });
-$('cropStage').addEventListener('pointercancel', ()=>{ cropCtl.dragging = false; });
-
-$('cropStage').addEventListener('touchstart', e=>{
-  if(e.touches.length===2){
-    e.preventDefault();
-    cropCtl.dragging = false;
-    cropCtl.pinching = true;
-    const [a,b] = e.touches;
-    cropCtl.pinchStartDist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
-    cropCtl.pinchStartScale = cropCtl.scale;
-    cropCtl.pinchStartX = cropCtl.x;
-    cropCtl.pinchStartY = cropCtl.y;
-    cropCtl.pinchMidX = (a.clientX + b.clientX) / 2;
-    cropCtl.pinchMidY = (a.clientY + b.clientY) / 2;
-  }
-}, {passive:false});
-
-$('cropStage').addEventListener('touchmove', e=>{
-  if(!cropCtl.pinching || e.touches.length !== 2) return;
-  e.preventDefault();
-  const [a,b] = e.touches;
-  const dist = Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
-  let newScale = cropCtl.pinchStartScale * (dist / cropCtl.pinchStartDist);
-  newScale = Math.max(cropCtl.minScale, Math.min(cropCtl.maxScale, newScale));
-
-  const midX = (a.clientX + b.clientX) / 2;
-  const midY = (a.clientY + b.clientY) / 2;
-  const dx = midX - cropCtl.pinchMidX;
-  const dy = midY - cropCtl.pinchMidY;
-
-  const k = newScale / cropCtl.pinchStartScale;
-  cropCtl.scale = newScale;
-  cropCtl.x = (cropCtl.pinchStartX + dx) * k;
-  cropCtl.y = (cropCtl.pinchStartY + dy) * k;
-
-  $('cropZoom').value = newScale;
-  renderCrop();
-}, {passive:false});
-
-$('cropStage').addEventListener('touchend', e=>{
-  if(e.touches.length < 2) cropCtl.pinching = false;
-}, {passive:true});
-
-$('cropZoom').addEventListener('input', e=>{
-  const s = parseFloat(e.target.value);
-  const k = s / cropCtl.scale;
-  cropCtl.scale = s;
-  cropCtl.x *= k;
-  cropCtl.y *= k;
-  renderCrop();
-});
-
-$('cropReset').addEventListener('click', ()=>{
-  cropCtl.scale = 1;
-  cropCtl.x = 0;
-  cropCtl.y = 0;
-  $('cropZoom').value = 1;
-  renderCrop();
-});
-
-$('cropCancel').addEventListener('click', ()=>{
-  $('crop').classList.remove('open');
-  cropCtl.cb = null;
-});
-
-$('cropConfirm').addEventListener('click', ()=>{
-  const img = $('cropImg');
-  const vp = cropCtl.vpSize;
-  const outSize = cropCtl.shape === 'round' ? 512 : 1024;
-
-  const displayedW = cropCtl.baseW * cropCtl.scale;
-  const displayedH = cropCtl.baseH * cropCtl.scale;
-  const imgLeftInVp = cropCtl.x - displayedW / 2 + vp / 2;
-  const imgTopInVp  = cropCtl.y - displayedH / 2 + vp / 2;
-
-  const ratio = cropCtl.naturalW / displayedW;
-  const sx = imgLeftInVp * ratio;
-  const sy = imgTopInVp  * ratio;
-  const sSize = vp * ratio;
-
-  const cv = document.createElement('canvas');
-  cv.width = outSize;
-  cv.height = outSize;
-  const ctx = cv.getContext('2d');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-
-  if(cropCtl.shape === 'round'){
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(outSize/2, outSize/2, outSize/2, 0, Math.PI*2);
-    ctx.closePath();
-    ctx.clip();
-  }
-  ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, outSize, outSize);
-  if(cropCtl.shape === 'round') ctx.restore();
-
-  const url = cv.toDataURL('image/jpeg', 0.9);
-  $('crop').classList.remove('open');
-  if(cropCtl.cb) cropCtl.cb(url);
-  cropCtl.cb = null;
 });
 
 /* ============================================================
