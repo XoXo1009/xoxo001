@@ -757,8 +757,8 @@ body{
   </div>
 </div>
 <script>
-const SUPABASE_URL = 'https://fwwlztmyqghhrusypjdz.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_v7yiZpyk60DgxJS9Ucxf8Q_n2kEDYwD';
+const SUPABASE_URL = 'https://keurtxcccxtmjxlkhjbd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_AgdqUkA84zcMTtpMRKhTxQ_JgkX-_9H';
 
 (function(){
 'use strict';
@@ -2473,10 +2473,10 @@ $('cropCancel').addEventListener('click', ()=>{
   cropCtl.cb = null;
 });
 
-$('cropConfirm').addEventListener('click', ()=>{
+$('cropConfirm').addEventListener('click', async ()=>{
   const img = $('cropImg');
   const vp = cropCtl.vpSize;
-  const outSize = cropCtl.shape === 'round' ? 512 : 1024;
+  const outSize = cropCtl.shape === 'round' ? 400 : 800;
 
   const displayedW = cropCtl.baseW * cropCtl.scale;
   const displayedH = cropCtl.baseH * cropCtl.scale;
@@ -2505,12 +2505,41 @@ $('cropConfirm').addEventListener('click', ()=>{
   ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, outSize, outSize);
   if(cropCtl.shape === 'round') ctx.restore();
 
-  const url = cv.toDataURL('image/jpeg', 0.9);
-  $('crop').classList.remove('open');
-  if(cropCtl.cb) cropCtl.cb(url);
-  cropCtl.cb = null;
-});
+  $('cropConfirm').textContent = '上传中...';
+  $('cropConfirm').disabled = true;
 
+  cv.toBlob(async (blob) => {
+    try {
+      const IMG_API_URL = ''; // 以后填图床地址
+
+      let finalImageUrl = '';
+
+      if (IMG_API_URL) {
+        const formData = new FormData();
+        formData.append('image', blob, 'chat.jpg'); 
+        const res = await fetch(IMG_API_URL, {
+          method: 'POST',
+          body: formData
+        });
+        const json = await res.json();
+        finalImageUrl = json.data ? json.data.url : json.url;
+      } else {
+        finalImageUrl = cv.toDataURL('image/jpeg', 0.6); 
+      }
+
+      $('crop').classList.remove('open');
+      if(cropCtl.cb) cropCtl.cb(finalImageUrl);
+
+    } catch(e) {
+      console.error(e);
+      alert('图片上传失败，请重试或检查网络');
+    } finally {
+      $('cropConfirm').textContent = '完成';
+      $('cropConfirm').disabled = false;
+      cropCtl.cb = null;
+    }
+  }, 'image/jpeg', 0.6);
+});
 /* ============================================================
    全局事件
    ============================================================ */
