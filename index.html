@@ -229,10 +229,10 @@ body{
 .profile-hero-name{color:#fff;font-size:19px;font-weight:800;letter-spacing:-.4px;text-shadow:0 2px 8px rgba(0,0,0,.4);word-break:break-word;line-height:1.15;padding-bottom:var(--space-3);cursor:pointer;}
 
 .profile-body{padding:var(--space-6) var(--space-5) 0;}
-.profile-bio-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-6) var(--space-6);box-shadow:var(--shadow-subtle);cursor:pointer;margin-bottom:var(--space-5);}
-.profile-bio-label{font-size:10px;font-weight:700;color:var(--text-secondary);letter-spacing:.8px;text-transform:uppercase;margin-bottom:var(--space-3);}
-.profile-bio{font-size:13.5px;color:var(--text-primary);line-height:1.5;word-break:break-word;}
-.profile-bio.empty{color:var(--text-tertiary);font-style:italic;}
+.profile-bio-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-5) var(--space-6);box-shadow:var(--shadow-subtle);cursor:pointer;margin-bottom:var(--space-5);}
+.profile-bio-label{font-size:10px;font-weight:700;color:var(--text-secondary);letter-spacing:.8px;text-transform:uppercase;margin-bottom:var(--space-2);}
+.profile-bio{font-size:13.5px;color:var(--text-primary);line-height:1.5;word-break:break-word;min-height:18px;}
+.profile-bio.empty{color:var(--text-tertiary);font-style:italic;padding:2px 0;}
 
 .profile-stats{display:flex;gap:var(--space-5);margin-bottom:var(--space-6);}
 .stat-pill{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:var(--space-5) var(--space-4);text-align:center;box-shadow:var(--shadow-subtle);}
@@ -752,10 +752,11 @@ let isSyncing=false;
 let lastSyncedJSON='';
 let syncTimer=null;
 let pollTimer=null;
+let pendingLocalChanges=false;   /* 新增：本地有未推送修改 */
 
 let calAnchor=new Date();
 let editingPostId=null;
-let editorImages=[];       // 动态图改为多图数组（最多9张）
+let editorImages=[];
 let editorScheduleAt=null;
 let detailPostId=null;
 let replyingTo=null;
@@ -1056,7 +1057,6 @@ function normRoom(data){
     if(!p.readBy)p.readBy={};
     if(!p.id)p.id=genId('p');
   });
-  // 清理通知里指向已删除帖子的项
   const pidSet = new Set(d.posts.map(p=>p.id));
   d.notifications = d.notifications.filter(n=>!n.postId || pidSet.has(n.postId));
   return d;
@@ -1071,21 +1071,31 @@ function migComments(arr){
 }
 function saveRoom(){
   if(!roomCode||!state)return;
+  pendingLocalChanges=true;
   localStorage.setItem('cache_'+roomCode,JSON.stringify(state));
   clearTimeout(syncTimer);
-  syncTimer=setTimeout(pushRoom,700);
+  syncTimer=setTimeout(pushRoom,300);
 }
 async function pushRoom(){
   if(!roomCode||!state||isSyncing)return;
   const js=JSON.stringify(state);
-  if(js===lastSyncedJSON)return;
+  if(js===lastSyncedJSON){ pendingLocalChanges=false; return; }
   isSyncing=true;
-  try{await cloudUpdate(roomCode,state);lastSyncedJSON=js;}
-  catch(e){console.warn('同步失败',e);setTimeout(()=>{isSyncing=false;pushRoom();},2000);return;}
+  try{
+    await cloudUpdate(roomCode,state);
+    lastSyncedJSON=js;
+    if(JSON.stringify(state)===js) pendingLocalChanges=false;
+  }catch(e){
+    console.warn('同步失败',e);
+    isSyncing=false;
+    setTimeout(pushRoom,2000);
+    return;
+  }
   isSyncing=false;
+  if(pendingLocalChanges){ clearTimeout(syncTimer); syncTimer=setTimeout(pushRoom,500); }
 }
 async function pullRoom(){
-  if(!roomCode||isSyncing)return;
+  if(!roomCode||isSyncing||pendingLocalChanges)return;
   try{
     const data=await cloudGet(roomCode);
     if(!data)return;
@@ -1110,10 +1120,7 @@ function rerenderCurrent(){
 }
 
 /* ============================================================
-   通知系统（写入时判定 + 角标）
-   - 通知来源：对方评论我的帖子 / 对方回复我的评论
-   - 只对本人可见的未读通知计数
-   - 打开帖子详情自动清除该帖通知
+   通知系统
    ============================================================ */
 function notifyCountForPost(postId){
   if(!state||!currentUser)return 0;
@@ -1128,7 +1135,6 @@ function notifyUnreadTotal(){
 function pushNotification(n){
   if(!state)return;
   if(!state.notifications)state.notifications=[];
-  // 幂等：同类型+同来源+同帖+同评论 视为重复
   const dup=state.notifications.some(x=>
     x.type===n.type && x.from===n.from && x.postId===n.postId &&
     x.commentId===n.commentId
@@ -1137,16 +1143,13 @@ function pushNotification(n){
   state.notifications.unshift(Object.assign({id:genId('n'),read:false,createdAt:Date.now()},n));
   if(state.notifications.length>100)state.notifications.length=100;
 }
-// 评论发送后调用：为「帖主」「被回复者」生成通知
 function notifyOnNewComment(post, newComment){
   if(!state||!currentUser)return;
-  if(newComment.author!==currentUser)return; // 只对本人操作生成通知（避免双端重复）
+  if(newComment.author!==currentUser)return;
   const from=currentUser;
-  // 1. 评论了对方帖子
   if(post.author!==from){
     pushNotification({type:'comment',postId:post.id,commentId:newComment.id,from:from,text:newComment.text});
   }
-  // 2. 回复了对方评论
   if(newComment.replyTo){
     const target=findComment(post.comments,newComment.replyTo);
     if(target && target.author!==from){
@@ -1358,6 +1361,7 @@ async function openRoom(code,name){
     localStorage.setItem(LAST_ROOM_KEY,code);
     lastSyncedJSON=JSON.stringify(state);
     localStorage.setItem('cache_'+code,lastSyncedJSON);
+    pendingLocalChanges=false;
     if(!myRooms[code])myRooms[code]={name:state.roomName||('房间 '+code),joinedAt:Date.now()};
     myRooms[code].lastVisit=Date.now();
     localStorage.setItem(ROOMS_KEY,JSON.stringify(myRooms));
@@ -1381,7 +1385,7 @@ function enterMain(){
   $('fab').classList.remove('hidden');
   switchTab('feed');
   if(pollTimer)clearInterval(pollTimer);
-  pollTimer=setInterval(pullRoom,4000);
+  pollTimer=setInterval(pullRoom,3000);
 }
 function showLoad(t){$('loadingText').textContent=t||'加载中…';$('loading').classList.remove('hidden');}
 function hideLoad(){$('loading').classList.add('hidden');}
@@ -1529,7 +1533,6 @@ function renderCard(p){
   const badgeHtml = badgeN>0
     ? '<span class="post-badge">'+(badgeN>9?'9+':badgeN)+'</span>'
     : '';
-  // 多图：只显示第一张（封面）
   const imgHtml = (p.images && p.images.length) ? '<div class="post-media"><img src="'+p.images[0]+'"></div>'
                  : (p.image ? '<div class="post-media"><img src="'+p.image+'"></div>' : '');
   return '<div class="post'+(p.hidden?' hidden-post':'')+'" data-post-id="'+p.id+'">'+
@@ -1607,11 +1610,31 @@ function renderMe(){
   const box=$('meProfile');
   const r=renderProfile(u,true);
   box.innerHTML=r.html;
-  $('meCover').addEventListener('click',()=>pickImage('cover'));
-  const cb=$('meCoverBtn');if(cb)cb.addEventListener('click',e=>{e.stopPropagation();pickImage('cover');});
-  $('meAv').addEventListener('click',()=>pickImage('avatar'));
-  $('meName').addEventListener('click',editName);
-  $('meBio').addEventListener('click',editBio);
+
+  /* 覆盖式事件绑定，避免累积 */
+  box.onclick = function(e){
+    if(e.target.closest('#meCover') || e.target.closest('#meCoverBtn')){
+      e.stopPropagation();
+      pickImage('cover');
+      return;
+    }
+    if(e.target.closest('#meAv')){
+      e.stopPropagation();
+      pickImage('avatar');
+      return;
+    }
+    if(e.target.closest('#meName')){
+      e.stopPropagation();
+      editName();
+      return;
+    }
+    if(e.target.closest('#meBio')){
+      e.stopPropagation();
+      editBio();
+      return;
+    }
+  };
+
   mountProfileGrid(r.listId,r.posts);
 }
 
@@ -1655,7 +1678,6 @@ function renderDetail(postId){
   const name=u?u.name:'Ta';
   const av=u&&u.avatar?'<img src="'+u.avatar+'">':avSvg();
   const t=fmtPostTime(p);
-  // 多图轮播简化：显示第一张
   const heroImg = (p.images && p.images.length) ? p.images[0] : p.image;
   $('detailHero').innerHTML=heroImg?'<div class="detail-hero"><img src="'+heroImg+'"></div>':'';
   $('detailAv').innerHTML=av;
@@ -1852,7 +1874,6 @@ function renderCalendar(){
   const sdd=new Date(sd+'T00:00:00');
   const weekdays=['周日','周一','周二','周三','周四','周五','周六'];
   const todos=state.todos[sd]||[];
-  const note=state.notes[sd]||'';
   h+='<div class="cal-detail"><div class="cal-detail-head"><div><div class="cal-detail-date">'+(sdd.getMonth()+1)+'月'+sdd.getDate()+'日</div><div class="cal-detail-week">'+weekdays[sdd.getDay()]+'</div></div><button class="cal-detail-add" id="calAddTodo"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="cal-todos">';
   if(!todos.length)h+='<div class="cal-empty">还没有待办</div>';
   else todos.forEach(t=>{
@@ -2192,7 +2213,6 @@ function pickImage(type){
    ============================================================ */
 function openEditor(post){
   editingPostId=post?post.id:null;
-  // 兼容旧数据：如果有 image 字段，放进 images 数组
   editorImages = post ? (post.images ? post.images.slice() : (post.image ? [post.image] : [])) : [];
   editorScheduleAt=post?post.publishAt:null;
   $('editorText').value=post?post.text||'':'';
@@ -2262,7 +2282,7 @@ $('editorPub').addEventListener('click',()=>{
     const p=state.posts.find(x=>x.id===editingPostId);if(!p)return;
     p.text=text;
     p.images=editorImages.slice();
-    delete p.image; // 清理旧字段
+    delete p.image;
     if(editorScheduleAt)p.publishAt=editorScheduleAt;else delete p.publishAt;
   }else{
     state.posts.push({id:genId('p'),author:currentUser,text:text,images:editorImages.slice(),createdAt:Date.now(),publishAt:editorScheduleAt||null,comments:[],readBy:{}});
